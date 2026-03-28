@@ -418,7 +418,34 @@ html {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 28px;
+  margin-bottom: 20px;
+}
+
+/* ── Hero subtitle ── */
+.hero {
+  margin-bottom: 20px;
+}
+
+.hero-headline {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0 0 5px;
+}
+
+.hero-sub {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+@media (max-width: 480px) {
+  .hero-headline { font-size: 1.05rem; }
+  .hero-sub      { font-size: 0.82rem; }
 }
 
 .nav-brand {

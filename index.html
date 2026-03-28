@@ -64,6 +64,12 @@
       </div>
     </nav>
 
+    <!-- Hero — clarifies page purpose, sits between nav and result card -->
+    <div class="hero">
+      <h1 class="hero-headline">Should I post now?</h1>
+      <p class="hero-sub">Find the best time to post on Instagram, TikTok, and more.</p>
+    </div>
+
     <!-- Answer first. Controls sit below. -->
     <!-- Initial placeholder replaced immediately by render() in app.js -->
     <div id="result" class="result-card" aria-live="polite">
@@ -91,6 +97,24 @@
           <option value="global">Mixed Global</option>
         </select>
       </div>
+
+      <div class="control-group">
+        <label for="post-type" data-i18n="label_post_type">Post type</label>
+        <select id="post-type">
+          <!-- Populated dynamically by app.js based on selected platform -->
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="goal" data-i18n="label_goal">Goal</label>
+        <select id="goal">
+          <option value="reach">Reach</option>
+          <option value="engagement">Engagement</option>
+          <option value="replies">Replies</option>
+          <option value="clicks">Clicks</option>
+        </select>
+      </div>
+
     </div>
 
     <p class="hint" data-i18n="hint">For a more accurate result, match the audience to where most of your followers are.</p>
