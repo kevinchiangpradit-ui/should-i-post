@@ -649,3 +649,20 @@ html {
   color: var(--text);
   font-weight: 600;
 }
+
+/* ── Footer brand attribution ── */
+.footer-brand {
+  margin-top: 10px;
+  font-size: 0.64rem;
+  color: var(--subtle);
+  line-height: 1.5;
+}
+
+.footer-brand a {
+  color: var(--subtle);
+  text-decoration: none;
+}
+
+.footer-brand a:hover {
+  color: var(--muted);
+}
