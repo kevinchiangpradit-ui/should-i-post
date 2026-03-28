@@ -222,6 +222,17 @@ function _fmtRounded(date) {
   return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
 
+// Human-readable duration string for "post within X" note.
+function _fmtRemainingDuration(mins) {
+  if (mins <= 0) return null;
+  if (mins < 60) return mins + ' minute' + (mins === 1 ? '' : 's');
+  const h = mins / 60;
+  if (h % 1 === 0) return h + ' hour' + (h === 1 ? '' : 's');
+  const hFloor = Math.floor(h);
+  const mRem   = mins % 60;
+  return hFloor + ' hour' + (hFloor === 1 ? '' : 's') + ' ' + mRem + ' minutes';
+}
+
 // ─── Public API ──────────────────────────────────────────────────────────────
 /**
  * @param {string} platform       - Key from PLATFORM_CURVES
@@ -246,41 +257,65 @@ function getRecommendation(platform, audiencePreset, now, threshold, postType, g
 
   const currentScore = _scoreAtQuarter(platform, audiencePreset, snapped, modKey, goal, niche);
 
-  let bestScore           = currentScore;
-  let bestQuartersFromNow = 0;
-
+  // Reference peak over lookahead window — used only to derive the absolute threshold.
+  let bestScore = currentScore;
   for (let q = 1; q <= LOOKAHEAD_HOURS * 4; q++) {
-    const t     = new Date(snapped.getTime() + q * 15 * 60_000);
-    const score = _scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche);
-    if (score > bestScore) {
-      bestScore           = score;
-      bestQuartersFromNow = q;
-    }
+    const t = new Date(snapped.getTime() + q * 15 * 60_000);
+    const s = _scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche);
+    if (s > bestScore) bestScore = s;
   }
 
-  const ratio   = bestScore > 0 ? currentScore / bestScore : 1;
-  const postNow = bestQuartersFromNow === 0 || bestScore === 0 || ratio >= threshold;
+  const ratio          = bestScore > 0 ? currentScore / bestScore : 1;
+  const postNow        = bestScore === 0 || ratio >= threshold;
+  const scoreThreshold = bestScore * threshold;   // absolute score bar
 
-  // Round quarters → whole hours for display; never expose 15-min increments in UI
-  const hoursToWait = bestQuartersFromNow === 0
-    ? 0
-    : Math.max(1, Math.round(bestQuartersFromNow / 4));
+  let hoursToWait     = 0;
+  let remainingMins   = 0;
+  let windowStartDate = new Date(snapped);
+  let windowEndDate   = new Date(snapped.getTime() + 90 * 60_000);
 
-  const peakDate = new Date(snapped.getTime() + bestQuartersFromNow * 15 * 60_000);
-  const { startDate, endDate } = _findWindowRange(
-    platform, audiencePreset, peakDate, bestScore, modKey, goal, niche
-  );
+  if (postNow) {
+    // Find how long this above-threshold run continues (consecutive quarters only).
+    if (bestScore > 0) {
+      for (let q = 1; q <= LOOKAHEAD_HOURS * 4; q++) {
+        const t = new Date(snapped.getTime() + q * 15 * 60_000);
+        if (_scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche) >= scoreThreshold) {
+          remainingMins = q * 15;
+        } else {
+          break;
+        }
+      }
+    }
+    windowStartDate = new Date(snapped);
+    windowEndDate   = new Date(snapped.getTime() + Math.max(remainingMins, 15) * 60_000);
 
-  const s = _fmtRounded(startDate);
-  const e = _fmtRounded(endDate);
+  } else {
+    // Find the FIRST future quarter where score clears the threshold.
+    let firstQual = LOOKAHEAD_HOURS * 4;        // fallback: end of lookahead
+    for (let q = 1; q <= LOOKAHEAD_HOURS * 4; q++) {
+      const t = new Date(snapped.getTime() + q * 15 * 60_000);
+      if (_scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche) >= scoreThreshold) {
+        firstQual = q;
+        break;
+      }
+    }
+    hoursToWait     = Math.max(1, Math.round(firstQual / 4));
+    windowStartDate = new Date(snapped.getTime() + firstQual * 15 * 60_000);
+    windowEndDate   = new Date(windowStartDate.getTime() + 90 * 60_000);
+  }
+
+  const s = _fmtRounded(windowStartDate);
+  const e = _fmtRounded(windowEndDate);
   const bestWindowRange = s === e ? s : `${s} – ${e}`;
+  const remainingLabel  = _fmtRemainingDuration(remainingMins);
 
   return {
-    action:         postNow ? 'POST_NOW' : 'WAIT',  // kept for compat
+    action:   postNow ? 'POST_NOW' : 'WAIT',
     hoursToWait,
     bestWindowRange,
     currentScore,
     bestScore,
     ratio,
+    remainingLabel,
   };
 }

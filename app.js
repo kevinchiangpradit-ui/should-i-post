@@ -96,16 +96,20 @@
     return h === 1 ? t('sub_wait_hour') : t('sub_wait_hours', { n: h });
   }
 
-  function reasonLine(state, level, bestScore) {
+  // Deterministic variant index — changes every 15 min, never flickers mid-render.
+  function _reasonVariant(now) {
+    return Math.floor(now.getTime() / (15 * 60 * 1000)) % 4;
+  }
+
+  function reasonLine(state, level, bestScore, now) {
     if (state === 'NOW') {
-      if (bestScore < 1)    return t('reason_slow_all_day');
-      if (level === 'peak') return t('reason_at_peak');
-      return t('reason_strong_window');
+      if (bestScore < 1) return t('reason_slow_all_day');
+      return t('reason_now_' + _reasonVariant(now));
     }
-    if (state === 'SOON') return t('reason_soon');
-    if (level === 'very low') return t('reason_very_low');
-    if (level === 'low')      return t('reason_low');
-    return t('reason_medium');
+    if (level === 'very low' || level === 'low') {
+      return t('reason_wait_' + _reasonVariant(now));
+    }
+    return t('reason_mid_' + _reasonVariant(now));
   }
 
   function activityBadge(state, ratio, currentScore, bestScore) {
@@ -204,11 +208,11 @@
     const threshold = FLEXIBILITY_THRESHOLDS[currentFlex];
     const rec       = getRecommendation(platform, audience, now, threshold, postType, goal);
 
-    const state = timingState(rec.ratio, bands);
+    const state = rec.action === 'POST_NOW' ? 'NOW' : 'WAIT';
     const level = activityLevel(rec.ratio, bands);
 
     const sub          = subDecision(state, rec.hoursToWait);
-    const reason       = reasonLine(state, level, rec.bestScore);
+    const reason       = reasonLine(state, level, rec.bestScore, now);
     const badge        = activityBadge(state, rec.ratio, rec.currentScore, rec.bestScore);
     const levelClass   = 'level-' + level.replace(' ', '-');
     const windowLabel  = state === 'NOW' ? t('peak_window') : t('best_window');
@@ -218,14 +222,19 @@
     timestampEl.textContent = t('updated_at', { time: localTime });
 
     resultEl.className = `result-card ${state.toLowerCase()}`;
+    const withinNote = (state === 'NOW' && rec.remainingLabel)
+      ? `<p class="within-note">Post within <strong>${rec.remainingLabel}</strong> to achieve best results</p>`
+      : '';
+
     resultEl.innerHTML = `
       <div class="state">${t('state_' + state.toLowerCase())}</div>
       <div class="sub-decision">${sub}</div>
       <p class="reason">${reason}</p>
-      <p class="window-line">
+      ${withinNote}
+      ${state !== 'NOW' ? `<p class="window-line">
         ${windowLabel}: <strong>${rec.bestWindowRange}</strong>
         <span class="window-note">${t('peak_hours')}</span>
-      </p>
+      </p>` : ''}
       <div class="detail-row">
         <span>${t('right_now')}: <strong class="${levelClass}">${t('level_' + level.replace(' ', '_'))}</strong></span>
         <span class="score-badge">${badge}</span>

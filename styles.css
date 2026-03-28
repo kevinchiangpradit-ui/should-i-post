@@ -199,6 +199,18 @@ header {
   margin-bottom: 14px;
 }
 
+/* "Post within X to achieve best results" — secondary note, POST NOW only */
+.within-note {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.within-note strong {
+  font-weight: 600;
+}
+
 /* 4. Best / peak window */
 .window-line {
   font-size: 0.875rem;

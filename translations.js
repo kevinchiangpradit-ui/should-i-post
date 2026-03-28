@@ -42,6 +42,24 @@ window.TRANSLATIONS = {
     reason_low:            "It's pretty quiet right now.",
     reason_medium:         'Some activity, but a better window is coming.',
 
+    // POST NOW variants — rotate every 15 min (index 0–3)
+    reason_now_0: 'Good timing — people are active right now.',
+    reason_now_1: "Now's a strong window to post.",
+    reason_now_2: 'Activity is high — this is a good moment.',
+    reason_now_3: "If you're ready, this is a great time to post.",
+
+    // WAIT variants — low / very low activity
+    reason_wait_0: "It's pretty quiet right now.",
+    reason_wait_1: 'Activity is low at the moment.',
+    reason_wait_2: 'Not much happening right now.',
+    reason_wait_3: "This isn't a very active window.",
+
+    // MID variants — medium / high activity, still below threshold
+    reason_mid_0: "It's okay, but not peak.",
+    reason_mid_1: 'Decent timing, but better windows are coming.',
+    reason_mid_2: "Some activity, but not at its best.",
+    reason_mid_3: "You could post now, but it's not ideal.",
+
     // ── Badge ────────────────────────────────────────────────────────────────────
     badge_low_period:    'Low activity period',
     badge_at_peak:       'At peak',
@@ -176,6 +194,21 @@ window.TRANSLATIONS = {
     reason_low:           'Está bastante tranquilo ahora mismo.',
     reason_medium:        'Hay algo de actividad, pero viene un mejor momento.',
 
+    reason_now_0:  'Buen momento — hay bastante actividad ahora.',
+    reason_now_1:  'Ahora es un buen momento para publicar.',
+    reason_now_2:  'La actividad es alta — este es un buen momento.',
+    reason_now_3:  'Si estás listo, este es un gran momento para publicar.',
+
+    reason_wait_0: 'Está bastante tranquilo ahora mismo.',
+    reason_wait_1: 'La actividad es baja en este momento.',
+    reason_wait_2: 'No hay mucho movimiento ahora.',
+    reason_wait_3: 'Esta no es una ventana muy activa.',
+
+    reason_mid_0:  'No está mal, pero no es el pico.',
+    reason_mid_1:  'Buen momento, pero vienen ventanas mejores.',
+    reason_mid_2:  'Hay algo de actividad, pero no en su mejor momento.',
+    reason_mid_3:  'Podrías publicar ahora, pero no es lo ideal.',
+
     badge_low_period:     'Período de baja actividad',
     badge_at_peak:        'En el pico',
     badge_near_peak:      'Cerca del pico',
@@ -296,6 +329,21 @@ window.TRANSLATIONS = {
     reason_very_low:      '大多数人现在还不活跃。',
     reason_low:           '现在相当平静。',
     reason_medium:        '有些活动，但更好的时段即将到来。',
+
+    reason_now_0:  '时机不错——目前有很多人在线。',
+    reason_now_1:  '现在是发帖的好时机。',
+    reason_now_2:  '活跃度较高——这是个好时机。',
+    reason_now_3:  '如果准备好了，现在是发帖的好时机。',
+
+    reason_wait_0: '现在相当平静。',
+    reason_wait_1: '目前活跃度较低。',
+    reason_wait_2: '现在没有太多活动。',
+    reason_wait_3: '这不是一个很活跃的时间段。',
+
+    reason_mid_0:  '还过得去，但还不是高峰。',
+    reason_mid_1:  '时机还行，但更好的时段快来了。',
+    reason_mid_2:  '有些活动，但还未达到最佳状态。',
+    reason_mid_3:  '现在可以发，但不是最理想的时机。',
 
     badge_low_period:     '低活跃时段',
     badge_at_peak:        '处于高峰',
@@ -418,6 +466,21 @@ window.TRANSLATIONS = {
     reason_low:           '今はかなり静かな時間帯です。',
     reason_medium:        'ある程度活動はありますが、より良い時間帯が来ます。',
 
+    reason_now_0:  'タイミングが良好です — 今はたくさんの人がアクティブです。',
+    reason_now_1:  '今は投稿に適したタイミングです。',
+    reason_now_2:  'アクティビティが高め — 今が良いタイミングです。',
+    reason_now_3:  '準備ができていれば、今が投稿の好機です。',
+
+    reason_wait_0: '今はかなり静かです。',
+    reason_wait_1: '現在、活動量は低めです。',
+    reason_wait_2: '今はあまり活動がありません。',
+    reason_wait_3: '今はそれほど活発な時間帯ではありません。',
+
+    reason_mid_0:  '悪くはないですが、ピークではありません。',
+    reason_mid_1:  'まずまずですが、より良い時間帯が来ます。',
+    reason_mid_2:  '活動はありますが、最良の状態ではありません。',
+    reason_mid_3:  '今でも投稿できますが、理想的ではありません。',
+
     badge_low_period:     '低活動期',
     badge_at_peak:        'ピーク時',
     badge_near_peak:      'ピーク近く',
@@ -539,6 +602,21 @@ window.TRANSLATIONS = {
     reason_low:           "C'est assez calme pour l'instant.",
     reason_medium:        "Un peu d'activité, mais un meilleur créneau arrive.",
 
+    reason_now_0:  "Bon timing — l'activité est forte en ce moment.",
+    reason_now_1:  "C'est un bon créneau pour publier.",
+    reason_now_2:  "L'activité est haute — c'est le bon moment.",
+    reason_now_3:  "Si tu es prêt, c'est un excellent moment pour publier.",
+
+    reason_wait_0: "C'est assez calme pour l'instant.",
+    reason_wait_1: "L'activité est faible en ce moment.",
+    reason_wait_2: "Il ne se passe pas grand-chose là.",
+    reason_wait_3: "Ce n'est pas une fenêtre très active.",
+
+    reason_mid_0:  "Pas mal, mais pas encore le pic.",
+    reason_mid_1:  "Correct, mais de meilleures fenêtres arrivent.",
+    reason_mid_2:  "Un peu d'activité, mais pas encore au top.",
+    reason_mid_3:  "Tu pourrais publier, mais c'est pas l'idéal.",
+
     badge_low_period:     "Période de faible activité",
     badge_at_peak:        'Au pic',
     badge_near_peak:      'Proche du pic',
@@ -659,6 +737,21 @@ window.TRANSLATIONS = {
     reason_very_low:      'Die meisten Nutzer sind noch nicht aktiv.',
     reason_low:           'Im Moment ist es ziemlich ruhig.',
     reason_medium:        'Etwas Aktivität, aber ein besseres Zeitfenster kommt noch.',
+
+    reason_now_0:  'Gutes Timing — gerade sind viele Nutzer aktiv.',
+    reason_now_1:  'Jetzt ist ein gutes Zeitfenster zum Posten.',
+    reason_now_2:  'Die Aktivität ist hoch — ein guter Moment.',
+    reason_now_3:  'Wenn du bereit bist, ist das ein toller Zeitpunkt zum Posten.',
+
+    reason_wait_0: 'Im Moment ist es ziemlich ruhig.',
+    reason_wait_1: 'Die Aktivität ist gerade niedrig.',
+    reason_wait_2: 'Gerade passiert nicht viel.',
+    reason_wait_3: 'Das ist gerade kein besonders aktives Zeitfenster.',
+
+    reason_mid_0:  'Nicht schlecht, aber noch nicht der Peak.',
+    reason_mid_1:  'Akzeptables Timing, aber bessere Fenster kommen.',
+    reason_mid_2:  'Etwas Aktivität, aber nicht ganz optimal.',
+    reason_mid_3:  'Du könntest jetzt posten, aber es ist nicht ideal.',
 
     badge_low_period:     'Ruhige Phase',
     badge_at_peak:        'Im Peak',
