@@ -45,6 +45,7 @@
 
   // Activity label relative to the best upcoming window, not absolute score.
   // "peak" always means the same state as NOW; "high" as SOON; rest as WAIT.
+  // Returns internal English keys — used for CSS classes and t() lookups.
   function activityLevel(ratio, bands) {
     if (ratio >= bands.now)  return 'peak';
     if (ratio >= bands.soon) return 'high';
@@ -55,40 +56,38 @@
 
   // Short sub-label showing the specific timing under the big state word.
   function subDecision(state, hoursToWait) {
-    if (state === 'NOW') return 'Post now';
+    if (state === 'NOW') return t('sub_post_now');
     const h = hoursToWait;
-    return `Wait ~${h} ${h === 1 ? 'hour' : 'hours'}`;
+    return h === 1 ? t('sub_wait_hour') : t('sub_wait_hours', { n: h });
   }
 
   // One conversational line keyed directly to the activity level name.
   function reasonLine(state, level, bestScore) {
     if (state === 'NOW') {
-      if (bestScore < 1)    return "It's pretty slow all day — no better window ahead.";
-      if (level === 'peak') return "You're basically at peak activity.";
-      return "You're in a strong window right now.";
+      if (bestScore < 1)    return t('reason_slow_all_day');
+      if (level === 'peak') return t('reason_at_peak');
+      return t('reason_strong_window');
     }
-    if (state === 'SOON') {
-      return "Getting close — activity picks up soon.";
-    }
+    if (state === 'SOON') return t('reason_soon');
     // WAIT
-    if (level === 'very low') return "Most people aren't active yet.";
-    if (level === 'low')      return "It's pretty quiet right now.";
-    return "Some activity, but a better window is coming.";
+    if (level === 'very low') return t('reason_very_low');
+    if (level === 'low')      return t('reason_low');
+    return t('reason_medium');
   }
 
   // Badge label for the right of the detail row.
   // NOW: qualitative. SOON/WAIT: % improvement to peak.
   function activityBadge(state, ratio, currentScore, bestScore) {
     if (state === 'NOW') {
-      if (bestScore < 1)  return 'Low activity period';
-      if (ratio >= 0.97)  return 'At peak';
-      return 'Near peak';
+      if (bestScore < 1)  return t('badge_low_period');   // neutral — no color
+      if (ratio >= 0.97)  return `<strong>${t('badge_at_peak')}</strong>`;
+      return `<strong>${t('badge_near_peak')}</strong>`;
     }
     // SOON or WAIT — show how much better the peak window is
-    if (currentScore <= 0) return '<strong>&gt;999%</strong> more activity at peak';
+    if (currentScore <= 0) return t('badge_pct_more', { pct: '<strong>&gt;999%</strong>' });
     const pct = Math.round(((bestScore - currentScore) / currentScore) * 100);
-    if (pct < 10)  return 'Slightly more at peak';
-    return `<strong>${pct}%</strong> more activity at peak`;
+    if (pct < 10) return `<strong>${t('badge_slightly_more')}</strong>`;
+    return t('badge_pct_more', { pct: `<strong>${pct}%</strong>` });
   }
 
   const PLATFORM_LABELS = {
@@ -116,31 +115,32 @@
     const reason       = reasonLine(state, level, rec.bestScore);
     const badge        = activityBadge(state, rec.ratio, rec.currentScore, rec.bestScore);
     const levelClass   = 'level-' + level.replace(' ', '-');
-    const windowLabel  = state === 'NOW' ? 'Peak window' : 'Best window';
+    const windowLabel  = state === 'NOW' ? t('peak_window') : t('best_window');
     const platformName = PLATFORM_LABELS[platform];
 
     const localTime = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    timestampEl.textContent = `Updated at ${localTime}`;
+    timestampEl.textContent = t('updated_at', { time: localTime });
 
     resultEl.className = `result-card ${state.toLowerCase()}`;
     resultEl.innerHTML = `
-      <div class="state">${state}</div>
+      <div class="state">${t('state_' + state.toLowerCase())}</div>
       <div class="sub-decision">${sub}</div>
       <p class="reason">${reason}</p>
       <p class="window-line">
         ${windowLabel}: <strong>${rec.bestWindowRange}</strong>
-        <span class="window-note">· peak hours</span>
+        <span class="window-note">${t('peak_hours')}</span>
       </p>
       <div class="detail-row">
-        <span>Right now: <strong class="${levelClass}">${level}</strong></span>
+        <span>${t('right_now')}: <strong class="${levelClass}">${t('level_' + level.replace(' ', '_'))}</strong></span>
         <span class="score-badge">${badge}</span>
       </div>
-      <p class="disclaimer">Based on typical ${platformName} usage patterns — not your personal analytics.</p>
+      <p class="disclaimer">${t('disclaimer', { platform: platformName })}</p>
     `;
   }
 
   platformEl.addEventListener('change', render);
   audienceEl.addEventListener('change', render);
+  window.addEventListener('langchange', render);
 
   render();
   setInterval(render, 60_000);

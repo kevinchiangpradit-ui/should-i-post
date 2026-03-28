@@ -31,15 +31,38 @@
       );
     })();
   </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
 
-    <header>
-      <h1 class="page-question">Should I post?</h1>
-      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
-    </header>
+    <!-- Top navigation -->
+    <nav class="top-nav" aria-label="Site navigation">
+      <a class="nav-brand" href="#" aria-label="Should I Post? — home">
+        <img src="/logo.svg" class="nav-logo" alt="" aria-hidden="true">
+        <span data-i18n="nav_brand">Should I Post?</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#faq" data-i18n="nav_faq">FAQ</a>
+        <a href="#how-it-works" data-i18n="nav_how">How it works</a>
+        <a href="#privacy" data-i18n="nav_privacy">Privacy</a>
+      </div>
+
+      <div class="nav-right">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
+        <select id="lang-select" class="lang-select" aria-label="Language">
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="fr">FR</option>
+          <option value="de">DE</option>
+        </select>
+      </div>
+    </nav>
 
     <!-- Answer first. Controls sit below. -->
     <!-- Initial placeholder replaced immediately by render() in app.js -->
@@ -50,7 +73,7 @@
 
     <div class="controls">
       <div class="control-group">
-        <label for="platform">Platform</label>
+        <label for="platform" data-i18n="label_platform">Platform</label>
         <select id="platform">
           <option value="instagram">Instagram</option>
           <option value="tiktok">TikTok</option>
@@ -60,24 +83,24 @@
       </div>
 
       <div class="control-group">
-        <label for="audience">Audience</label>
+        <label for="audience" data-i18n="label_audience">Audience</label>
         <select id="audience">
-          <option value="mostly-us">Mostly US</option>
-          <option value="mostly-eu">Mostly Europe</option>
-          <option value="mostly-asia">Mostly Asia</option>
+          <option value="mostly-us">US</option>
+          <option value="mostly-eu">Europe</option>
+          <option value="mostly-asia">Asia</option>
           <option value="global">Mixed Global</option>
         </select>
       </div>
     </div>
 
-    <p class="hint">For a more accurate result, match the audience to where most of your followers are.</p>
+    <p class="hint" data-i18n="hint">For a more accurate result, match the audience to where most of your followers are.</p>
 
     <div class="control-group timing-group">
-      <label>Timing</label>
+      <label data-i18n="label_timing">Timing</label>
       <div class="flex-control" id="flexibility" role="group" aria-label="Timing strictness">
-        <button class="flex-btn" data-flex="flexible">Good enough</button>
-        <button class="flex-btn active" data-flex="balanced">Balanced</button>
-        <button class="flex-btn" data-flex="strict">Best possible</button>
+        <button class="flex-btn" data-flex="flexible" data-i18n="flex_flexible">Good enough</button>
+        <button class="flex-btn active" data-flex="balanced" data-i18n="flex_balanced">Balanced</button>
+        <button class="flex-btn" data-flex="strict" data-i18n="flex_strict">Best possible</button>
       </div>
     </div>
 
@@ -85,26 +108,83 @@
 
     <footer class="site-footer">
       <p class="footer-badges">
-        <span>Free tool</span>
+        <span data-i18n="footer_free">Free tool</span>
         <span class="footer-dot" aria-hidden="true">·</span>
-        <span>No login required</span>
+        <span data-i18n="footer_no_login">No login required</span>
         <span class="footer-dot" aria-hidden="true">·</span>
-        <span>No data stored</span>
+        <span data-i18n="footer_no_data">No data stored</span>
       </p>
-      <p class="footer-tagline">Built for quick posting decisions</p>
+      <p class="footer-tagline" data-i18n="footer_tagline">Built for quick posting decisions</p>
     </footer>
+
+    <!-- Content sections — linked from top nav -->
+    <section id="faq" class="content-section">
+      <h2 data-i18n="faq_title">FAQ</h2>
+      <div class="faq-item">
+        <p class="faq-q" data-i18n="faq_q1">How does this work?</p>
+        <p class="faq-a" data-i18n="faq_a1">It checks the current time against known activity patterns for your chosen platform and audience region, then tells you whether it's a good time to post or when to wait.</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q" data-i18n="faq_q2">Is this using my account data?</p>
+        <p class="faq-a" data-i18n="faq_a2">No. The tool has no access to your account, followers, or analytics. It uses general usage patterns for the platform and region you select.</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q" data-i18n="faq_q3">How accurate is this?</p>
+        <p class="faq-a" data-i18n="faq_a3">It's a general heuristic based on typical platform usage patterns — not your personal analytics. Treat it as a solid starting point, not a guarantee.</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q" data-i18n="faq_q4">Does it work for all platforms?</p>
+        <p class="faq-a" data-i18n="faq_a4">Yes — Instagram, TikTok, Twitter/X, and LinkedIn each have separate timing models tuned to their typical usage patterns.</p>
+      </div>
+      <div class="faq-item">
+        <p class="faq-q" data-i18n="faq_q5">Why isn't my platform listed?</p>
+        <p class="faq-a" data-i18n="faq_a5">This tool only covers platforms where post timing has a clear, short-term impact on reach. For others — like YouTube or Pinterest — timing matters less, or the patterns aren't consistent enough to be useful.</p>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="content-section">
+      <h2 data-i18n="how_title">How it works</h2>
+      <p class="section-body" data-i18n="how_p1">Select your platform and the region where most of your audience is. The tool scores activity levels hour by hour, weighted by region, and finds the best upcoming window within the next 12 hours.</p>
+      <p class="section-body" data-i18n="how_p2">No personal data is used. Everything runs in your browser using time and regional activity patterns.</p>
+      <p class="section-body" data-i18n="how_p3">The Timing setting lets you choose how close to peak you need to be — flexible accepts a wider window, strict waits for the best moment.</p>
+    </section>
+
+    <section id="privacy" class="content-section">
+      <h2 data-i18n="privacy_title">Privacy</h2>
+      <p class="section-body" data-i18n="privacy_p1">No login required. No account access. No personal data collected or stored. Nothing you enter leaves your browser.</p>
+      <p class="section-body" data-i18n="privacy_p2">This site may use basic anonymous analytics (page views) to understand traffic. No cookies are set for tracking.</p>
+    </section>
 
   </div>
 
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
   <script src="logic.js"></script>
   <script src="app.js"></script>
   <script>
-    // Theme toggle: flip data-theme and persist to localStorage
-    document.getElementById('theme-toggle').addEventListener('click', function () {
-      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-    });
+    (function () {
+      // Apply saved language to static [data-i18n] elements on load
+      if (window.__lang !== 'en') {
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+          el.textContent = window.t(el.getAttribute('data-i18n'));
+        });
+      }
+
+      // Set lang select to saved/detected language
+      document.getElementById('lang-select').value = window.__lang;
+
+      // Lang select
+      document.getElementById('lang-select').addEventListener('change', function () {
+        window.setLang(this.value);
+      });
+
+      // Theme toggle
+      document.getElementById('theme-toggle').addEventListener('click', function () {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    })();
   </script>
 </body>
 </html>

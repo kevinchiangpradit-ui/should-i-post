@@ -15,34 +15,30 @@
 :root {
   color-scheme: light;
 
-  --bg:     #f2f2ed;
+  /* Brand */
+  --brand: #009245;
+
+  /* Neutral base — true neutral, no blue or warm cast */
+  --bg:     #f5f5f5;
   --card:   #ffffff;
-  --text:   #1c1c1a;
-  --muted:  #4b5563;   /* darkened from #6b7280 for better readability on beige */
-  --border: #d4d0ca;   /* slightly darker than before */
-  --subtle: #9ca3af;   /* timestamps, disclaimer */
+  --text:   #1a1a1a;
+  --muted:  #555555;
+  --border: #e0e0e0;
+  --subtle: #a0a0a0;
 
-  --badge-bg:      rgba(0, 0, 0, 0.07);
-  --surface-track: rgba(0, 0, 0, 0.06);  /* flex-control background */
-  --shadow-sm:     rgba(0, 0, 0, 0.12);
+  --badge-bg:      rgba(0, 0, 0, 0.09);
+  --surface-track: rgba(0, 0, 0, 0.06);
+  --shadow-sm:     rgba(0, 0, 0, 0.10);
 
-  /* State colors */
-  --green:        #15803d;
-  --green-light:  #f0fdf4;
-  --green-border: #bbf7d0;
-
-  --orange:        #c2410c;
-  --orange-light:  #fff7ed;
-  --orange-border: #fed7aa;
-
-  --amber:        #92400e;
-  --amber-light:  #fffbeb;
-  --amber-border: #fde68a;
+  /* Decision accent colors — used for text and left accent only */
+  --green:  #009245;
+  --orange: #c2410c;
+  --amber:  #92400e;
 
   /* Activity level label colors */
-  --level-good: #166534;   /* green-800 — slightly richer than before */
-  --level-mid:  #92400e;   /* amber-800 */
-  --level-low:  #b91c1c;   /* red-700 */
+  --level-good: #009245;
+  --level-mid:  #92400e;
+  --level-low:  #b91c1c;
 
   --radius: 14px;
   --max-w:  600px;
@@ -52,31 +48,27 @@
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --bg:     #1c1a18;
-  --card:   #252320;
-  --text:   #ede9e3;
-  --muted:  #a8a29a;
-  --border: #3a3530;
-  --subtle: #6b6660;
+  /* Brand — same logo green (~4.5:1 on charcoal, WCAG AA) */
+  --brand: #009245;
 
-  --badge-bg:      rgba(255, 255, 255, 0.10);
-  --surface-track: rgba(255, 255, 255, 0.07);
+  /* Neutral base — true charcoal, zero blue cast */
+  --bg:     #161616;
+  --card:   #212121;
+  --text:   #f0f0f0;
+  --muted:  #9e9e9e;
+  --border: #333333;
+  --subtle: #666666;
+
+  --badge-bg:      rgba(255, 255, 255, 0.13);
+  --surface-track: rgba(255, 255, 255, 0.08);
   --shadow-sm:     rgba(0, 0, 0, 0.40);
 
-  /* State colors — lighter for dark backgrounds */
-  --green:        #4ade80;
-  --green-light:  #0d2016;
-  --green-border: #1e4030;
+  /* Decision accent colors — lighter for readability on dark */
+  --green:  #4ade80;
+  --orange: #fb923c;
+  --amber:  #fbbf24;
 
-  --orange:        #fb923c;
-  --orange-light:  #231608;
-  --orange-border: #3a2510;
-
-  --amber:        #fbbf24;
-  --amber-light:  #1e1900;
-  --amber-border: #38300a;
-
-  /* Activity level colors — readable on dark */
+  /* Activity level colors */
   --level-good: #4ade80;
   --level-mid:  #fbbf24;
   --level-low:  #f87171;
@@ -152,7 +144,7 @@ header {
 }
 
 .theme-toggle:hover { border-color: var(--muted); color: var(--text); }
-.theme-toggle:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; }
+.theme-toggle:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
 /* Show moon in light mode (click = go dark), sun in dark mode (click = go light) */
 [data-theme="light"] .theme-toggle::before { content: '☽'; }
@@ -174,9 +166,9 @@ header {
   .result-card { margin-bottom: 20px; }
 }
 
-.result-card.now  { background: var(--green-light);  border-color: var(--green-border); }
-.result-card.soon { background: var(--orange-light); border-color: var(--orange-border); }
-.result-card.wait { background: var(--amber-light);  border-color: var(--amber-border); }
+.result-card.now  { border-left: 3px solid var(--green); }
+.result-card.soon { border-left: 3px solid var(--orange); }
+.result-card.wait { border-left: 3px solid var(--amber); }
 
 /* 1. Big state word — highest visual priority */
 .state {
@@ -260,6 +252,15 @@ header {
   font-weight: 800;
 }
 
+/* Decision-colored badge: tinted bg + colored number per state */
+.now  .score-badge { background: rgba(0, 146, 69, 0.14); }
+.soon .score-badge { background: rgba(194, 65, 12, 0.14); }
+.wait .score-badge { background: rgba(146, 64, 14, 0.14); }
+
+.now  .score-badge strong { color: var(--green); }
+.soon .score-badge strong { color: var(--orange); }
+.wait .score-badge strong { color: var(--amber); }
+
 /* 6. Disclaimer — smallest, least important */
 .disclaimer {
   font-size: 0.72rem;
@@ -304,6 +305,7 @@ select {
   border: 1.5px solid var(--border);
   border-radius: 8px;
   padding: 11px 30px 11px 11px;
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
   font-size: 0.875rem;
   color: var(--text);
   cursor: pointer;
@@ -313,11 +315,11 @@ select {
 }
 
 select:hover { border-color: var(--muted); }
-select:focus { outline: 2px solid #3b82f6; outline-offset: 2px; border-color: transparent; }
+select:focus { outline: 2px solid var(--brand); outline-offset: 2px; border-color: transparent; }
 
-/* Dark mode: lighter chevron */
+/* Dark mode: neutral-gray chevron */
 [data-theme="dark"] select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23a8a29a' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%239ca3af' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
 }
 
 /* Hint */
@@ -347,6 +349,7 @@ select:focus { outline: 2px solid #3b82f6; outline-offset: 2px; border-color: tr
   background: transparent;
   border-radius: 6px;
   padding: 10px 4px;
+  font-family: 'Space Grotesk', -apple-system, sans-serif;
   font-size: 0.77rem;
   font-weight: 500;
   color: var(--muted);
@@ -364,7 +367,7 @@ select:focus { outline: 2px solid #3b82f6; outline-offset: 2px; border-color: tr
 }
 
 .flex-btn:focus-visible {
-  outline: 2px solid #3b82f6;
+  outline: 2px solid var(--brand);
   outline-offset: 1px;
 }
 
@@ -403,4 +406,165 @@ select:focus { outline: 2px solid #3b82f6; outline-offset: 2px; border-color: tr
   margin-top: 5px;
   font-size: 0.68rem;
   color: var(--subtle);
+}
+
+/* ── Smooth scroll ── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Top navigation ── */
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  text-decoration: none;
+  color: var(--brand);
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
+.nav-brand:hover { opacity: 0.75; }
+
+.nav-logo {
+  flex-shrink: 0;
+  height: 18px;
+  width: auto;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-links a {
+  font-size: 0.78rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+  white-space: nowrap;
+}
+
+.nav-links a:hover { color: var(--text); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.lang-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  cursor: default;
+  user-select: none;
+  padding: 4px 2px;
+}
+
+/* Hide center nav links on very small screens */
+@media (max-width: 420px) {
+  .nav-links { display: none; }
+}
+
+/* ── Language selector ── */
+.lang-select {
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--card);
+  background-image: none;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  width: auto;
+  min-height: unset;
+  transition: border-color 0.15s, background-color 0.15s;
+  font-family: inherit;
+}
+
+.lang-select:hover {
+  border-color: var(--muted);
+  background-color: var(--bg);
+}
+
+.lang-select:focus {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-color: transparent;
+}
+
+/* Option popup — works in Firefox; Chrome/Safari use color-scheme from :root */
+.lang-select option {
+  background-color: var(--card);
+  color: var(--text);
+}
+
+/* Suppress the global dark-mode chevron inherited by all selects */
+[data-theme="dark"] .lang-select {
+  background-image: none;
+}
+
+/* ── Content sections ── */
+.content-section {
+  margin-top: 40px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+  scroll-margin-top: 16px;
+}
+
+.content-section h2 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+}
+
+.faq-item {
+  margin-bottom: 18px;
+}
+
+.faq-item:last-child {
+  margin-bottom: 0;
+}
+
+.faq-q {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.faq-a {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.section-body {
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.section-body + .section-body {
+  margin-top: 9px;
 }
