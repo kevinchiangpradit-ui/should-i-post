@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Should I Post Now? (Free Instagram Timing Tool)</title>
+  <meta name="description" content="Instantly find out whether you should post now or wait. Free tool based on audience activity by time and region.">
+  <link rel="canonical" href="https://shouldipostnow.com/" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Should I Post Now? (Free Instagram Timing Tool)">
+  <meta property="og:description" content="Instantly find out whether you should post now or wait. Free tool based on audience activity by time and region.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://shouldipostnow.com/">
+  <meta property="og:image" content="https://shouldipostnow.com/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Should I Post Now? (Free Instagram Timing Tool)">
+  <meta name="twitter:description" content="Instantly find out whether you should post now or wait. Free tool based on audience activity by time and region.">
+  <meta name="twitter:url" content="https://shouldipostnow.com/">
+  <meta name="twitter:image" content="https://shouldipostnow.com/og-image.png">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <!-- Prevent flash of wrong theme: runs synchronously before first paint -->
+  <script>
+    (function () {
+      var stored   = localStorage.getItem('theme');
+      var sysDark  = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme',
+        stored === 'dark' || (!stored && sysDark) ? 'dark' : 'light'
+      );
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <h1 class="page-question">Should I post?</h1>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
+    </header>
+
+    <!-- Answer first. Controls sit below. -->
+    <!-- Initial placeholder replaced immediately by render() in app.js -->
+    <div id="result" class="result-card" aria-live="polite">
+      <div class="state">—</div>
+      <div class="sub-decision">Calculating best time…</div>
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <label for="platform">Platform</label>
+        <select id="platform">
+          <option value="instagram">Instagram</option>
+          <option value="tiktok">TikTok</option>
+          <option value="twitter">Twitter / X</option>
+          <option value="linkedin">LinkedIn</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label for="audience">Audience</label>
+        <select id="audience">
+          <option value="mostly-us">Mostly US</option>
+          <option value="mostly-eu">Mostly Europe</option>
+          <option value="mostly-asia">Mostly Asia</option>
+          <option value="global">Mixed Global</option>
+        </select>
+      </div>
+    </div>
+
+    <p class="hint">For a more accurate result, match the audience to where most of your followers are.</p>
+
+    <div class="control-group timing-group">
+      <label>Timing</label>
+      <div class="flex-control" id="flexibility" role="group" aria-label="Timing strictness">
+        <button class="flex-btn" data-flex="flexible">Good enough</button>
+        <button class="flex-btn active" data-flex="balanced">Balanced</button>
+        <button class="flex-btn" data-flex="strict">Best possible</button>
+      </div>
+    </div>
+
+    <p class="timestamp" id="timestamp"></p>
+
+    <footer class="site-footer">
+      <p class="footer-badges">
+        <span>Free tool</span>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <span>No login required</span>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <span>No data stored</span>
+      </p>
+      <p class="footer-tagline">Built for quick posting decisions</p>
+    </footer>
+
+  </div>
+
+  <script src="logic.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // Theme toggle: flip data-theme and persist to localStorage
+    document.getElementById('theme-toggle').addEventListener('click', function () {
+      var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  </script>
+</body>
+</html>
