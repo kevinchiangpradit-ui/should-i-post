@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How It Works — Should I Post Now?</title>
+  <meta name="description" content="How Should I Post? works — platform activity patterns, 15-minute scoring, and what the timing recommendation actually means.">
+  <link rel="canonical" href="https://shouldipostnow.com/how-it-works.html" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      var stored  = localStorage.getItem('theme');
+      var sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme',
+        stored === 'dark' || (!stored && sysDark) ? 'dark' : 'light'
+      );
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+
+    <nav class="top-nav" aria-label="Site navigation">
+      <a class="nav-brand" href="/" aria-label="Should I Post? — home">
+        <img src="/logo.svg" class="nav-logo" alt="" aria-hidden="true">
+        <span data-i18n="nav_brand">Should I Post?</span>
+      </a>
+      <div class="nav-right">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
+        <select id="lang-select" class="lang-select" aria-label="Language">
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="fr">FR</option>
+          <option value="de">DE</option>
+        </select>
+      </div>
+    </nav>
+
+    <main class="page-body">
+      <h1 class="page-heading" data-i18n="how_title">How it works</h1>
+      <p class="section-body" data-i18n="how_p1">Select your platform, the region where most of your audience is, your post type, and your goal. The tool uses those inputs to find the best upcoming posting window.</p>
+      <p class="section-body" data-i18n="how_p2">Activity levels are scored at 15-minute intervals, weighted by region, and projected up to 12 hours ahead. If now is already a strong window, it tells you to post. If a better window is coming, it tells you roughly how long to wait.</p>
+      <p class="section-body" data-i18n="how_p3">The Timing setting controls the threshold. "Good enough" accepts a wider window and recommends posting sooner. "Best possible" holds out until activity is close to peak.</p>
+      <p class="section-body" data-i18n="how_p4">Everything runs in your browser. No personal data is used — the scoring is based on typical activity patterns for the platform and region you choose, not your own account analytics.</p>
+    </main>
+
+    <footer class="site-footer">
+      <nav class="footer-nav" aria-label="Site links">
+        <a href="/about.html" data-i18n="footer_about">About</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/privacy.html" data-i18n="nav_privacy">Privacy</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/terms.html" data-i18n="footer_terms">Terms</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/faq.html" data-i18n="nav_faq">FAQ</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/how-it-works.html" data-i18n="nav_how" aria-current="page">How it works</a>
+      </nav>
+      <p class="footer-tagline" data-i18n="footer_tagline">Built for quick posting decisions</p>
+    </footer>
+
+  </div>
+
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script>
+    (function () {
+      if (window.__lang !== 'en') {
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+          el.textContent = window.t(el.getAttribute('data-i18n'));
+        });
+      }
+      document.getElementById('lang-select').value = window.__lang;
+      document.getElementById('lang-select').addEventListener('change', function () {
+        window.setLang(this.value);
+      });
+      document.getElementById('theme-toggle').addEventListener('click', function () {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    })();
+  </script>
+</body>
+</html>

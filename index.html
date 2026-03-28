@@ -45,12 +45,6 @@
         <span data-i18n="nav_brand">Should I Post?</span>
       </a>
 
-      <div class="nav-links">
-        <a href="#faq" data-i18n="nav_faq">FAQ</a>
-        <a href="#how-it-works" data-i18n="nav_how">How it works</a>
-        <a href="#privacy" data-i18n="nav_privacy">Privacy</a>
-      </div>
-
       <div class="nav-right">
         <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
         <select id="lang-select" class="lang-select" aria-label="Language">
@@ -64,14 +58,13 @@
       </div>
     </nav>
 
-    <!-- Hero — clarifies page purpose, sits between nav and result card -->
+    <!-- Hero -->
     <div class="hero">
-      <h1 class="hero-headline">Should I post now?</h1>
-      <p class="hero-sub">Find the best time to post on Instagram, TikTok, and more.</p>
+      <h1 class="hero-headline" data-i18n="hero_headline">Should I post now?</h1>
+      <p class="hero-sub" data-i18n="hero_sub">Find the best time to post on Instagram, TikTok, and more.</p>
     </div>
 
     <!-- Answer first. Controls sit below. -->
-    <!-- Initial placeholder replaced immediately by render() in app.js -->
     <div id="result" class="result-card" aria-live="polite">
       <div class="state">—</div>
       <div class="sub-decision">Calculating best time…</div>
@@ -91,10 +84,10 @@
       <div class="control-group">
         <label for="audience" data-i18n="label_audience">Audience</label>
         <select id="audience">
-          <option value="mostly-us">US</option>
-          <option value="mostly-eu">Europe</option>
-          <option value="mostly-asia">Asia</option>
-          <option value="global">Mixed Global</option>
+          <option value="mostly-us"   data-i18n="opt_us">US</option>
+          <option value="mostly-eu"   data-i18n="opt_eu">Europe</option>
+          <option value="mostly-asia" data-i18n="opt_asia">Asia</option>
+          <option value="global"      data-i18n="opt_global">Mixed Global</option>
         </select>
       </div>
 
@@ -108,10 +101,10 @@
       <div class="control-group">
         <label for="goal" data-i18n="label_goal">Goal</label>
         <select id="goal">
-          <option value="reach">Reach</option>
-          <option value="engagement">Engagement</option>
-          <option value="replies">Replies</option>
-          <option value="clicks">Clicks</option>
+          <option value="reach"       data-i18n="opt_reach">Reach</option>
+          <option value="engagement"  data-i18n="opt_engagement">Engagement</option>
+          <option value="replies"     data-i18n="opt_replies">Replies</option>
+          <option value="clicks"      data-i18n="opt_clicks">Clicks</option>
         </select>
       </div>
 
@@ -131,6 +124,17 @@
     <p class="timestamp" id="timestamp"></p>
 
     <footer class="site-footer">
+      <nav class="footer-nav" aria-label="Site links">
+        <a href="/about.html" data-i18n="footer_about">About</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/privacy.html" data-i18n="nav_privacy">Privacy</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/terms.html" data-i18n="footer_terms">Terms</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/faq.html" data-i18n="nav_faq">FAQ</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/how-it-works.html" data-i18n="nav_how">How it works</a>
+      </nav>
       <p class="footer-badges">
         <span data-i18n="footer_free">Free tool</span>
         <span class="footer-dot" aria-hidden="true">·</span>
@@ -140,44 +144,6 @@
       </p>
       <p class="footer-tagline" data-i18n="footer_tagline">Built for quick posting decisions</p>
     </footer>
-
-    <!-- Content sections — linked from top nav -->
-    <section id="faq" class="content-section">
-      <h2 data-i18n="faq_title">FAQ</h2>
-      <div class="faq-item">
-        <p class="faq-q" data-i18n="faq_q1">How does this work?</p>
-        <p class="faq-a" data-i18n="faq_a1">It checks the current time against known activity patterns for your chosen platform and audience region, then tells you whether it's a good time to post or when to wait.</p>
-      </div>
-      <div class="faq-item">
-        <p class="faq-q" data-i18n="faq_q2">Is this using my account data?</p>
-        <p class="faq-a" data-i18n="faq_a2">No. The tool has no access to your account, followers, or analytics. It uses general usage patterns for the platform and region you select.</p>
-      </div>
-      <div class="faq-item">
-        <p class="faq-q" data-i18n="faq_q3">How accurate is this?</p>
-        <p class="faq-a" data-i18n="faq_a3">It's a general heuristic based on typical platform usage patterns — not your personal analytics. Treat it as a solid starting point, not a guarantee.</p>
-      </div>
-      <div class="faq-item">
-        <p class="faq-q" data-i18n="faq_q4">Does it work for all platforms?</p>
-        <p class="faq-a" data-i18n="faq_a4">Yes — Instagram, TikTok, Twitter/X, and LinkedIn each have separate timing models tuned to their typical usage patterns.</p>
-      </div>
-      <div class="faq-item">
-        <p class="faq-q" data-i18n="faq_q5">Why isn't my platform listed?</p>
-        <p class="faq-a" data-i18n="faq_a5">This tool only covers platforms where post timing has a clear, short-term impact on reach. For others — like YouTube or Pinterest — timing matters less, or the patterns aren't consistent enough to be useful.</p>
-      </div>
-    </section>
-
-    <section id="how-it-works" class="content-section">
-      <h2 data-i18n="how_title">How it works</h2>
-      <p class="section-body" data-i18n="how_p1">Select your platform and the region where most of your audience is. The tool scores activity levels hour by hour, weighted by region, and finds the best upcoming window within the next 12 hours.</p>
-      <p class="section-body" data-i18n="how_p2">No personal data is used. Everything runs in your browser using time and regional activity patterns.</p>
-      <p class="section-body" data-i18n="how_p3">The Timing setting lets you choose how close to peak you need to be — flexible accepts a wider window, strict waits for the best moment.</p>
-    </section>
-
-    <section id="privacy" class="content-section">
-      <h2 data-i18n="privacy_title">Privacy</h2>
-      <p class="section-body" data-i18n="privacy_p1">No login required. No account access. No personal data collected or stored. Nothing you enter leaves your browser.</p>
-      <p class="section-body" data-i18n="privacy_p2">This site may use basic anonymous analytics (page views) to understand traffic. No cookies are set for tracking.</p>
-    </section>
 
   </div>
 

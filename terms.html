@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms of Use — Should I Post Now?</title>
+  <meta name="description" content="Terms of use for Should I Post? — informational tool, no guarantee of results, user responsibility.">
+  <link rel="canonical" href="https://shouldipostnow.com/terms.html" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      var stored  = localStorage.getItem('theme');
+      var sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme',
+        stored === 'dark' || (!stored && sysDark) ? 'dark' : 'light'
+      );
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+
+    <nav class="top-nav" aria-label="Site navigation">
+      <a class="nav-brand" href="/" aria-label="Should I Post? — home">
+        <img src="/logo.svg" class="nav-logo" alt="" aria-hidden="true">
+        <span data-i18n="nav_brand">Should I Post?</span>
+      </a>
+      <div class="nav-right">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
+        <select id="lang-select" class="lang-select" aria-label="Language">
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="fr">FR</option>
+          <option value="de">DE</option>
+        </select>
+      </div>
+    </nav>
+
+    <main class="page-body">
+      <h1 class="page-heading" data-i18n="terms_title">Terms of use</h1>
+      <p class="section-body" data-i18n="terms_p1">Should I Post? is provided for informational purposes only.</p>
+      <p class="section-body" data-i18n="terms_p2">The timing recommendations are based on generalized activity patterns and are not guarantees of reach, engagement, or results. Actual outcomes depend on many factors outside this tool's scope.</p>
+      <p class="section-body" data-i18n="terms_p3">You are responsible for your own posting decisions. This tool is a starting point, not professional advice.</p>
+      <p class="section-body" data-i18n="terms_p4">This site may be updated, changed, or taken offline at any time without notice.</p>
+      <p class="section-body" data-i18n="terms_p5">By using this site, you accept these terms.</p>
+    </main>
+
+    <footer class="site-footer">
+      <nav class="footer-nav" aria-label="Site links">
+        <a href="/about.html" data-i18n="footer_about">About</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/privacy.html" data-i18n="nav_privacy">Privacy</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/terms.html" data-i18n="footer_terms" aria-current="page">Terms</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/faq.html" data-i18n="nav_faq">FAQ</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/how-it-works.html" data-i18n="nav_how">How it works</a>
+      </nav>
+      <p class="footer-tagline" data-i18n="footer_tagline">Built for quick posting decisions</p>
+    </footer>
+
+  </div>
+
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script>
+    (function () {
+      if (window.__lang !== 'en') {
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+          el.textContent = window.t(el.getAttribute('data-i18n'));
+        });
+      }
+      document.getElementById('lang-select').value = window.__lang;
+      document.getElementById('lang-select').addEventListener('change', function () {
+        window.setLang(this.value);
+      });
+      document.getElementById('theme-toggle').addEventListener('click', function () {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    })();
+  </script>
+</body>
+</html>

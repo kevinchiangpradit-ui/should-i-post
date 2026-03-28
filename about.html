@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Should I Post Now?</title>
+  <meta name="description" content="Should I Post? helps you decide whether to post on social media now or wait for a better window, based on platform activity patterns.">
+  <link rel="canonical" href="https://shouldipostnow.com/about.html" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      var stored  = localStorage.getItem('theme');
+      var sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme',
+        stored === 'dark' || (!stored && sysDark) ? 'dark' : 'light'
+      );
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+
+    <nav class="top-nav" aria-label="Site navigation">
+      <a class="nav-brand" href="/" aria-label="Should I Post? — home">
+        <img src="/logo.svg" class="nav-logo" alt="" aria-hidden="true">
+        <span data-i18n="nav_brand">Should I Post?</span>
+      </a>
+      <div class="nav-right">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
+        <select id="lang-select" class="lang-select" aria-label="Language">
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="fr">FR</option>
+          <option value="de">DE</option>
+        </select>
+      </div>
+    </nav>
+
+    <main class="page-body">
+      <h1 class="page-heading" data-i18n="about_title">About</h1>
+      <p class="section-body" data-i18n="about_p1">Should I Post? is a free tool that helps you decide whether to post on social media now or wait for a better window.</p>
+      <p class="section-body" data-i18n="about_p2">It looks at the current time and compares it against generalized activity patterns for your chosen platform and audience region. The result tells you whether now is a strong window, whether a better one is coming soon, or whether you should hold off.</p>
+      <p class="section-body" data-i18n="about_p3">The tool isn't connected to your account and doesn't use your personal analytics. It's meant as a quick, practical signal — not a guarantee.</p>
+    </main>
+
+    <footer class="site-footer">
+      <nav class="footer-nav" aria-label="Site links">
+        <a href="/about.html" data-i18n="footer_about" aria-current="page">About</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/privacy.html" data-i18n="nav_privacy">Privacy</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/terms.html" data-i18n="footer_terms">Terms</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/faq.html" data-i18n="nav_faq">FAQ</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/how-it-works.html" data-i18n="nav_how">How it works</a>
+      </nav>
+      <p class="footer-tagline" data-i18n="footer_tagline">Built for quick posting decisions</p>
+    </footer>
+
+  </div>
+
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script>
+    (function () {
+      if (window.__lang !== 'en') {
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+          el.textContent = window.t(el.getAttribute('data-i18n'));
+        });
+      }
+      document.getElementById('lang-select').value = window.__lang;
+      document.getElementById('lang-select').addEventListener('change', function () {
+        window.setLang(this.value);
+      });
+      document.getElementById('theme-toggle').addEventListener('click', function () {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    })();
+  </script>
+</body>
+</html>

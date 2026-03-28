@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy — Should I Post Now?</title>
+  <meta name="description" content="Privacy policy for Should I Post? — what data is collected, cookies, and how ads may be used.">
+  <link rel="canonical" href="https://shouldipostnow.com/privacy.html" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script>
+    (function () {
+      var stored  = localStorage.getItem('theme');
+      var sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme',
+        stored === 'dark' || (!stored && sysDark) ? 'dark' : 'light'
+      );
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+
+    <nav class="top-nav" aria-label="Site navigation">
+      <a class="nav-brand" href="/" aria-label="Should I Post? — home">
+        <img src="/logo.svg" class="nav-logo" alt="" aria-hidden="true">
+        <span data-i18n="nav_brand">Should I Post?</span>
+      </a>
+      <div class="nav-right">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode"></button>
+        <select id="lang-select" class="lang-select" aria-label="Language">
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+          <option value="zh">中文</option>
+          <option value="ja">日本語</option>
+          <option value="fr">FR</option>
+          <option value="de">DE</option>
+        </select>
+      </div>
+    </nav>
+
+    <main class="page-body">
+      <h1 class="page-heading" data-i18n="privacy_title">Privacy</h1>
+      <p class="section-body" data-i18n="privacy_p1">No login required. No account access. Nothing you enter or select on this site is stored or transmitted elsewhere.</p>
+      <p class="section-body" data-i18n="privacy_p2">This site does not collect personal information. Basic anonymous analytics — such as page view counts — may be used to understand overall traffic. This data is aggregated and does not identify individual users.</p>
+      <p class="section-body" data-i18n="privacy_p3">This site uses cookies to remember your theme (light or dark) and language preference. These are stored locally in your browser and are not used for tracking.</p>
+      <p class="section-body" data-i18n="privacy_p4">This site may display ads through Google AdSense in the future. If enabled, Google and other third-party ad vendors may use cookies to serve ads based on prior visits to this and other websites.</p>
+      <p class="section-body">
+        <span data-i18n="privacy_p5">To opt out of personalized advertising, visit:</span>
+        <a href="https://www.google.com/settings/ads" rel="noopener noreferrer" target="_blank">Google Ads Settings</a>
+        ·
+        <a href="http://www.aboutads.info/choices/" rel="noopener noreferrer" target="_blank">aboutads.info</a>
+      </p>
+    </main>
+
+    <footer class="site-footer">
+      <nav class="footer-nav" aria-label="Site links">
+        <a href="/about.html" data-i18n="footer_about">About</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/privacy.html" data-i18n="nav_privacy" aria-current="page">Privacy</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/terms.html" data-i18n="footer_terms">Terms</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/faq.html" data-i18n="nav_faq">FAQ</a>
+        <span class="footer-dot" aria-hidden="true">·</span>
+        <a href="/how-it-works.html" data-i18n="nav_how">How it works</a>
+      </nav>
+      <p class="footer-tagline" data-i18n="footer_tagline">Built for quick posting decisions</p>
+    </footer>
+
+  </div>
+
+  <script src="translations.js"></script>
+  <script src="i18n.js"></script>
+  <script>
+    (function () {
+      if (window.__lang !== 'en') {
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+          el.textContent = window.t(el.getAttribute('data-i18n'));
+        });
+      }
+      document.getElementById('lang-select').value = window.__lang;
+      document.getElementById('lang-select').addEventListener('change', function () {
+        window.setLang(this.value);
+      });
+      document.getElementById('theme-toggle').addEventListener('click', function () {
+        var next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      });
+    })();
+  </script>
+</body>
+</html>

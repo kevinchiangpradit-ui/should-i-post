@@ -14,28 +14,29 @@
   // ── Post type options per platform ────────────────────────────────────────
   // Each platform gets its own set of options. When the platform changes,
   // postTypeEl is rebuilt from this config.
+  // Keys map to translation strings via t() so labels update with language.
   const POST_TYPE_OPTIONS = {
     instagram: [
-      { value: 'reel',     label: 'Reel' },
-      { value: 'story',    label: 'Story' },
-      { value: 'carousel', label: 'Photo album' },
-      { value: 'static',   label: 'Post' },
+      { value: 'reel',     key: 'post_reel' },
+      { value: 'story',    key: 'post_story' },
+      { value: 'carousel', key: 'post_carousel' },
+      { value: 'static',   key: 'post_static' },
     ],
     tiktok: [
-      { value: 'video', label: 'Video' },
-      { value: 'photo', label: 'Photo' },
+      { value: 'video', key: 'post_video' },
+      { value: 'photo', key: 'post_photo' },
     ],
     twitter: [
-      { value: 'text',   label: 'Text' },
-      { value: 'image',  label: 'Image' },
-      { value: 'video',  label: 'Video' },
-      { value: 'thread', label: 'Thread' },
+      { value: 'text',   key: 'post_text' },
+      { value: 'image',  key: 'post_image' },
+      { value: 'video',  key: 'post_video' },
+      { value: 'thread', key: 'post_thread' },
     ],
     linkedin: [
-      { value: 'text_post',  label: 'Text' },
-      { value: 'image_post', label: 'Image' },
-      { value: 'doc_post',   label: 'Document' },
-      { value: 'video_post', label: 'Video' },
+      { value: 'text_post',  key: 'post_text' },
+      { value: 'image_post', key: 'post_image' },
+      { value: 'doc_post',   key: 'post_document' },
+      { value: 'video_post', key: 'post_video' },
     ],
   };
 
@@ -54,7 +55,7 @@
     opts.forEach(function (o) {
       const el = document.createElement('option');
       el.value       = o.value;
-      el.textContent = o.label;
+      el.textContent = t(o.key);
       postTypeEl.appendChild(el);
     });
     const stillValid = opts.some(function (o) { return o.value === current; });
@@ -118,7 +119,7 @@
     // WAIT / SOON: deterministic numeric multiplier, 1 decimal place max
     if (currentScore <= 0) {
       // Denominator is zero — use hard cap
-      return `<strong>3x</strong> more activity at peak`;
+      return t('badge_x_more_at_peak', { n: '<strong>3x</strong>' });
     }
 
     let r = bestScore / currentScore;
@@ -137,7 +138,7 @@
     // Drop trailing ".0" for whole numbers
     const display = (rounded % 1 === 0) ? rounded.toFixed(0) : rounded.toFixed(1);
 
-    return `<strong>${display}x</strong> more activity at peak`;
+    return t('badge_x_more_at_peak', { n: `<strong>${display}x</strong>` });
   }
 
   const PLATFORM_LABELS = {
@@ -166,7 +167,10 @@
   audienceEl.addEventListener('change',  render);
   postTypeEl.addEventListener('change',  render);
   goalEl.addEventListener('change',      render);
-  window.addEventListener('langchange',  render);
+  window.addEventListener('langchange', function () {
+    updatePostTypeOptions(platformEl.value);
+    render();
+  });
 
   // Logo → reset all inputs to defaults + scroll to top
   var logoEl = document.querySelector('.nav-brand');

@@ -549,7 +549,7 @@ html {
   background-image: none;
 }
 
-/* ── Content sections ── */
+/* ── Content sections (homepage inline, kept for compatibility) ── */
 .content-section {
   margin-top: 40px;
   padding-top: 28px;
@@ -587,11 +587,65 @@ html {
 }
 
 .section-body {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--muted);
   line-height: 1.6;
 }
 
 .section-body + .section-body {
-  margin-top: 9px;
+  margin-top: 10px;
+}
+
+.section-body a {
+  color: var(--brand);
+  text-decoration: none;
+}
+
+.section-body a:hover {
+  text-decoration: underline;
+}
+
+/* ── Standalone content pages ── */
+.page-body {
+  padding-top: 4px;
+}
+
+.page-heading {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: 22px;
+}
+
+/* ── Footer nav links ── */
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 2px 8px;
+  margin-bottom: 10px;
+}
+
+.footer-nav a {
+  font-size: 0.73rem;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.footer-nav a:hover { color: var(--text); }
+
+.footer-nav a:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Active page indicator in nav */
+.nav-links a[aria-current="page"] {
+  color: var(--text);
+  font-weight: 600;
 }
