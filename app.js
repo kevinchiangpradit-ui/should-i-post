@@ -206,7 +206,7 @@
 
     const bands     = RATIO_BANDS[currentFlex];
     const threshold = FLEXIBILITY_THRESHOLDS[currentFlex];
-    const rec       = getRecommendation(platform, audience, now, threshold, postType, goal);
+    const rec       = getRecommendation(platform, audience, now, threshold, postType, goal, currentFlex);
 
     const state = rec.action === 'POST_NOW' ? 'NOW' : 'WAIT';
     const level = activityLevel(rec.ratio, bands);

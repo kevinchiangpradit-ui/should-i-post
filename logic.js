@@ -233,6 +233,23 @@ function _fmtRemainingDuration(mins) {
   return hFloor + ' hour' + (hFloor === 1 ? '' : 's') + ' ' + mRem + ' minutes';
 }
 
+// ─── Window duration by mode ─────────────────────────────────────────────────
+// WAIT window end = window_start + this many minutes.
+// POST NOW window end is NOT affected — it uses actual threshold-drop timing.
+const WINDOW_DURATIONS = {
+  flexible: 120,   // Good enough  → wider window
+  balanced:  90,   // Balanced     → medium window
+  strict:    45,   // Best possible → tighter window
+};
+
+function getWindowDuration(flex) {
+  if (!(flex in WINDOW_DURATIONS)) {
+    console.warn('[getWindowDuration] unknown mode "' + flex + '", defaulting to 90 min');
+    return 90;
+  }
+  return WINDOW_DURATIONS[flex];
+}
+
 // ─── Public API ──────────────────────────────────────────────────────────────
 /**
  * @param {string} platform       - Key from PLATFORM_CURVES
@@ -241,12 +258,14 @@ function _fmtRemainingDuration(mins) {
  * @param {number} [threshold]    - POST_NOW ratio threshold (default: balanced)
  * @param {string} [postType]     - Select value e.g. 'reel', 'video', 'text_post'
  * @param {string} [goal]         - 'reach' | 'engagement' | 'replies' | 'clicks'
+ * @param {string} [flex]         - 'flexible' | 'balanced' | 'strict' (window duration)
  * @param {string} [niche]        - 'meme' | 'personal' | 'art' | 'business'
  */
-function getRecommendation(platform, audiencePreset, now, threshold, postType, goal, niche) {
+function getRecommendation(platform, audiencePreset, now, threshold, postType, goal, flex, niche) {
   if (threshold === undefined) threshold = FLEXIBILITY_THRESHOLDS.balanced;
   postType = postType || '';
   goal     = goal     || 'reach';
+  flex     = flex     || 'balanced';
   niche    = niche    || 'personal';
 
   const modKey = (POST_TYPE_MOD_MAP[platform] || {})[postType] || null;
@@ -301,7 +320,7 @@ function getRecommendation(platform, audiencePreset, now, threshold, postType, g
     }
     hoursToWait     = Math.max(1, Math.round(firstQual / 4));
     windowStartDate = new Date(snapped.getTime() + firstQual * 15 * 60_000);
-    windowEndDate   = new Date(windowStartDate.getTime() + 90 * 60_000);
+    windowEndDate   = new Date(windowStartDate.getTime() + getWindowDuration(flex) * 60_000);
   }
 
   const s = _fmtRounded(windowStartDate);
