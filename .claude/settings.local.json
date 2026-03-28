@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npx --version)",
       "mcp__Claude_Preview__preview_start",
-      "Bash(python -c \"from PIL import Image, ImageDraw, ImageFont; print\\(''Pillow OK''\\)\")"
+      "Bash(python -c \"from PIL import Image, ImageDraw, ImageFont; print\\(''Pillow OK''\\)\")",
+      "Bash(ls C:UsersAcerDocumentsAI Randomshould-i-postfavicon*)"
     ]
   }
 }
