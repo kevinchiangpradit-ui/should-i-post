@@ -62,7 +62,7 @@ window.TRANSLATIONS = {
 
     // ── Badge ────────────────────────────────────────────────────────────────────
     badge_low_period:    'Low activity period',
-    badge_at_peak:       'At peak',
+    badge_at_peak:       'Peak',
     badge_near_peak:     'Near peak',
     badge_x_more_at_peak: '{n} more activity at peak',
 
