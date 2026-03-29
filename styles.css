@@ -475,23 +475,14 @@ html {
 .nav-brand {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 5px;
   text-decoration: none;
-  color: var(--brand);
-  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 0.88rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  color: var(--text);
   flex-shrink: 0;
+  transition: opacity 0.15s;
 }
 
-.nav-brand:hover { opacity: 0.75; }
-
-.nav-logo {
-  flex-shrink: 0;
-  height: 18px;
-  width: auto;
-}
+.nav-brand:hover { opacity: 0.7; }
 
 .nav-links {
   display: flex;
@@ -512,20 +503,9 @@ html {
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
-
-.yttria-mark {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  text-decoration: none;
-  color: var(--text);
-  transition: opacity 0.15s;
-  flex-shrink: 0;
-}
-.yttria-mark:hover { opacity: 0.7; }
 
 .yttria-icon {
   height: 22px;
