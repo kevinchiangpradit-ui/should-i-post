@@ -11,6 +11,16 @@
 
   let currentFlex = 'balanced';
 
+  // ── Skip-window override state ─────────────────────────────────────────────
+  // null  → show primary recommendation
+  // Date  → show next qualifying window starting after this Date
+  let skipFrom         = null;
+  let _shownWindowEnd  = null;  // tracks end of currently displayed window for chaining
+
+  // Gap added after a skipped window's end before searching for the next one.
+  // Prevents the alternative from being an adjacent fragment of the same period.
+  const SKIP_GAP_MS = 3 * 60 * 60 * 1000;  // 3 hours — change here to tune
+
   // ── Post type options per platform ────────────────────────────────────────
   // Each platform gets its own set of options. When the platform changes,
   // postTypeEl is rebuilt from this config.
@@ -38,6 +48,12 @@
       { value: 'doc_post',   key: 'post_document' },
       { value: 'video_post', key: 'post_video' },
     ],
+    reddit: [
+      { value: 'discussion', key: 'post_discussion' },
+      { value: 'meme',       key: 'post_meme' },
+      { value: 'question',   key: 'post_question' },
+      { value: 'promotion',  key: 'post_promotion' },
+    ],
   };
 
   const POST_TYPE_DEFAULT = {
@@ -45,6 +61,7 @@
     tiktok:    'video',
     twitter:   'text',
     linkedin:  'text_post',
+    reddit:    'discussion',
   };
 
   // Rebuild post-type <select> whenever platform changes.
@@ -150,6 +167,7 @@
     tiktok:    'TikTok',
     twitter:   'Twitter/X',
     linkedin:  'LinkedIn',
+    reddit:    'Reddit',
   };
 
   // ── Event wiring ──────────────────────────────────────────────────────────
@@ -160,18 +178,21 @@
     flexControl.querySelectorAll('.flex-btn').forEach(function (b) { b.classList.remove('active'); });
     btn.classList.add('active');
     currentFlex = btn.dataset.flex;
+    skipFrom = null;
     render();
   });
 
   platformEl.addEventListener('change', function () {
+    skipFrom = null;
     updatePostTypeOptions(platformEl.value);
     render();
   });
 
-  audienceEl.addEventListener('change',  render);
-  postTypeEl.addEventListener('change',  render);
-  goalEl.addEventListener('change',      render);
+  audienceEl.addEventListener('change', function () { skipFrom = null; render(); });
+  postTypeEl.addEventListener('change', function () { skipFrom = null; render(); });
+  goalEl.addEventListener('change',     function () { skipFrom = null; render(); });
   window.addEventListener('langchange', function () {
+    skipFrom = null;
     updatePostTypeOptions(platformEl.value);
     render();
   });
@@ -181,6 +202,7 @@
   if (logoEl) {
     logoEl.addEventListener('click', function (e) {
       e.preventDefault();
+      skipFrom = null;
       platformEl.value = 'instagram';
       audienceEl.value = 'mostly-us';
       goalEl.value     = 'reach';
@@ -195,6 +217,18 @@
     });
   }
 
+  // Skip / reset click delegation — attached once, survives innerHTML resets
+  resultEl.addEventListener('click', function (e) {
+    if (e.target.closest('[data-action="skip-window"]')) {
+      skipFrom = new Date(_shownWindowEnd.getTime() + SKIP_GAP_MS);
+      render();
+    }
+    if (e.target.closest('[data-action="reset-window"]')) {
+      skipFrom = null;
+      render();
+    }
+  });
+
   // ── Render ────────────────────────────────────────────────────────────────
 
   function render() {
@@ -203,6 +237,11 @@
     const postType = postTypeEl.value;
     const goal     = goalEl.value;
     const now      = new Date();
+
+    // Auto-reset skip if the skipped-past window is now in the past
+    if (skipFrom !== null && skipFrom <= now) {
+      skipFrom = null;
+    }
 
     const bands     = RATIO_BANDS[currentFlex];
     const threshold = FLEXIBILITY_THRESHOLDS[currentFlex];
@@ -221,20 +260,41 @@
     const localTime = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
     timestampEl.textContent = t('updated_at', { time: localTime });
 
-    resultEl.className = `result-card ${state.toLowerCase()}`;
-    const withinNote = (state === 'NOW' && rec.remainingLabel)
-      ? `<p class="within-note">Post within <strong>${rec.remainingLabel}</strong> to achieve best results</p>`
-      : '';
+    // ── Build the window section (primary or skipped-to alternative) ─────────
+    let windowSection;
 
+    if (skipFrom !== null) {
+      // User has skipped the primary window — find next qualifying window
+      const altRec = getRecommendation(platform, audience, skipFrom, threshold, postType, goal, currentFlex);
+      _shownWindowEnd = altRec.windowEndDate;
+      windowSection = `
+        <div class="window-row">
+          <p class="alt-window-line">Next available window: <strong>${altRec.bestWindowRange}</strong></p>
+          <button class="skip-btn" data-action="skip-window">Skip this one too</button>
+        </div>
+        <button class="reset-btn" data-action="reset-window">Show best window again</button>`;
+    } else {
+      // Primary recommendation — show normal window info + skip button
+      _shownWindowEnd = rec.windowEndDate;
+      const withinNote = (state === 'NOW' && rec.remainingLabel)
+        ? `<p class="within-note">Post within <strong>${rec.remainingLabel}</strong> to achieve best results</p>`
+        : '';
+      const primaryWindow = state !== 'NOW'
+        ? `<p class="window-line">${windowLabel}: <strong>${rec.bestWindowRange}</strong> <span class="window-note">${t('peak_hours')}</span></p>`
+        : withinNote;
+      windowSection = `
+        <div class="window-row">
+          ${primaryWindow}
+          <button class="skip-btn" data-action="skip-window">I'll be asleep then</button>
+        </div>`;
+    }
+
+    resultEl.className = `result-card ${state.toLowerCase()}`;
     resultEl.innerHTML = `
       <div class="state">${t('state_' + state.toLowerCase())}</div>
       <div class="sub-decision">${sub}</div>
       <p class="reason">${reason}</p>
-      ${withinNote}
-      ${state !== 'NOW' ? `<p class="window-line">
-        ${windowLabel}: <strong>${rec.bestWindowRange}</strong>
-        <span class="window-note">${t('peak_hours')}</span>
-      </p>` : ''}
+      ${windowSection}
       <div class="detail-row">
         <span>${t('right_now')}: <strong class="${levelClass}">${t('level_' + level.replace(' ', '_'))}</strong></span>
         <span class="score-badge">${badge}</span>

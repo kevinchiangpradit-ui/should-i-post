@@ -37,6 +37,11 @@ const PLATFORM_CURVES = {
     EU:   [0,0,0,0,0,0,1,4,8,9,9,8,8,7,7,6,4,2,1,0,0,0,0,0],
     ASIA: [0,0,0,0,0,0,1,3,7,9,9,8,8,8,8,8,7,4,2,1,0,0,0,0],
   },
+  reddit: {
+    US:   [1,1,1,1,1,1,2,3,5,6,7,7,7,6,5,5,6,7,8,9,10,9,6,3],
+    EU:   [1,1,1,1,1,1,2,4,5,6,7,8,7,6,5,5,6,7,8,9, 9,7,4,2],
+    ASIA: [1,1,1,1,1,1,2,3,4,5,6,7,6,5,4,4,5,7,9,10, 9,7,4,2],
+  },
 };
 
 // ─── Day-of-week multipliers ──────────────────────────────────────────────────
@@ -47,6 +52,7 @@ const DAY_MULTIPLIERS = {
   tiktok:     [1.15, 0.85, 0.88, 0.90, 0.92, 1.10, 1.20],
   twitter:    [0.80, 0.95, 1.00, 1.00, 1.00, 0.90, 0.80],
   linkedin:   [0.20, 1.00, 1.00, 1.00, 1.00, 0.75, 0.25],
+  reddit:     [1.15, 0.90, 0.92, 0.95, 0.97, 1.05, 1.20],
 };
 
 // ─── Post type → modifier bucket ─────────────────────────────────────────────
@@ -56,6 +62,7 @@ const POST_TYPE_MOD_MAP = {
   tiktok:    { video: 'short_video', photo: 'image_static' },
   twitter:   { text: 'text',        image: 'image_static', video: 'long_video',     thread: 'text' },
   linkedin:  { text_post: 'text',   image_post: 'image_static', doc_post: 'document', video_post: 'long_video' },
+  reddit:    { discussion: 'text', meme: 'image_static', question: 'text', promotion: 'image_static' },
 };
 
 // ─── Post type hour modifiers ─────────────────────────────────────────────────
@@ -222,6 +229,58 @@ function _fmtRounded(date) {
   return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 }
 
+// Weekday names used for "beyond tomorrow" labels.
+const _WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+// Return the day prefix for a given date, relative to the user's actual current moment:
+//   same local calendar day  →  ''           (omit entirely)
+//   next local calendar day  →  'Tomorrow'
+//   anything later           →  full weekday name  (e.g. 'Tuesday')
+// Uses toLocaleDateString() so the day boundary matches the same locale/tz
+// as toLocaleTimeString() used for clock display everywhere else.
+function _dayLabel(date, today) {
+  const dateStr  = date.toLocaleDateString();
+  const todayStr = today.toLocaleDateString();
+  if (dateStr === todayStr) return '';
+
+  const tom = new Date(today);
+  tom.setDate(tom.getDate() + 1);
+  if (dateStr === tom.toLocaleDateString()) return 'Tomorrow';
+
+  return _WEEKDAYS[date.getDay()];
+}
+
+// Format a window range with smart, human-relative day labels.
+// Always uses the real current moment as the "today" reference so that labels
+// remain user-relative even for alternate/skip windows that start in the future.
+//
+// Rules:
+//   today → no prefix           "10:00 PM – 11:30 PM"
+//   tomorrow start → Tomorrow   "Tomorrow 8:00 AM – 9:30 AM"
+//   today→tomorrow cross        "10:00 PM – Tomorrow 12:00 AM"
+//   beyond tomorrow same-day    "Tuesday 8:00 AM – 9:30 AM"
+//   beyond tomorrow cross-day   "Tuesday 10:00 PM – Wednesday 12:00 AM"
+function _fmtWindowRange(startDate, endDate) {
+  const today   = new Date();   // actual current moment — user's reference for "today"
+  const s       = _fmtRounded(startDate);
+  const e       = _fmtRounded(endDate);
+  const sLabel  = _dayLabel(startDate, today);
+  const eLabel  = _dayLabel(endDate,   today);
+  const sameDay = startDate.toLocaleDateString() === endDate.toLocaleDateString();
+
+  const startPart = sLabel ? `${sLabel} ${s}` : s;
+
+  // Degenerate: start and end round to the same time on the same day
+  if (s === e && sameDay) return startPart;
+
+  // Same calendar day: no label needed on the end time
+  if (sameDay) return `${startPart} – ${e}`;
+
+  // Cross-day: label the end side only if it carries a non-empty label
+  const endPart = eLabel ? `${eLabel} ${e}` : e;
+  return `${startPart} – ${endPart}`;
+}
+
 // Human-readable duration string for "post within X" note.
 function _fmtRemainingDuration(mins) {
   if (mins <= 0) return null;
@@ -233,23 +292,6 @@ function _fmtRemainingDuration(mins) {
   return hFloor + ' hour' + (hFloor === 1 ? '' : 's') + ' ' + mRem + ' minutes';
 }
 
-// ─── Window duration by mode ─────────────────────────────────────────────────
-// WAIT window end = window_start + this many minutes.
-// POST NOW window end is NOT affected — it uses actual threshold-drop timing.
-const WINDOW_DURATIONS = {
-  flexible: 120,   // Good enough  → wider window
-  balanced:  90,   // Balanced     → medium window
-  strict:    45,   // Best possible → tighter window
-};
-
-function getWindowDuration(flex) {
-  if (!(flex in WINDOW_DURATIONS)) {
-    console.warn('[getWindowDuration] unknown mode "' + flex + '", defaulting to 90 min');
-    return 90;
-  }
-  return WINDOW_DURATIONS[flex];
-}
-
 // ─── Public API ──────────────────────────────────────────────────────────────
 /**
  * @param {string} platform       - Key from PLATFORM_CURVES
@@ -258,14 +300,14 @@ function getWindowDuration(flex) {
  * @param {number} [threshold]    - POST_NOW ratio threshold (default: balanced)
  * @param {string} [postType]     - Select value e.g. 'reel', 'video', 'text_post'
  * @param {string} [goal]         - 'reach' | 'engagement' | 'replies' | 'clicks'
- * @param {string} [flex]         - 'flexible' | 'balanced' | 'strict' (window duration)
+ * @param {string} [flex]         - 'flexible' | 'balanced' | 'strict' (kept for API compat)
  * @param {string} [niche]        - 'meme' | 'personal' | 'art' | 'business'
  */
 function getRecommendation(platform, audiencePreset, now, threshold, postType, goal, flex, niche) {
   if (threshold === undefined) threshold = FLEXIBILITY_THRESHOLDS.balanced;
   postType = postType || '';
   goal     = goal     || 'reach';
-  flex     = flex     || 'balanced';
+  flex     = flex     || 'balanced';   // accepted but no longer drives window size
   niche    = niche    || 'personal';
 
   const modKey = (POST_TYPE_MOD_MAP[platform] || {})[postType] || null;
@@ -291,10 +333,13 @@ function getRecommendation(platform, audiencePreset, now, threshold, postType, g
   let hoursToWait     = 0;
   let remainingMins   = 0;
   let windowStartDate = new Date(snapped);
-  let windowEndDate   = new Date(snapped.getTime() + 90 * 60_000);
+  let windowEndDate   = new Date(snapped.getTime() + 15 * 60_000);
 
   if (postNow) {
-    // Find how long this above-threshold run continues (consecutive quarters only).
+    // Case A: already above threshold.
+    // Walk forward until the first quarter that drops below scoreThreshold.
+    // remainingMins tracks the last qualifying offset so the window end =
+    // start of the first failing quarter (= end of last qualifying quarter).
     if (bestScore > 0) {
       for (let q = 1; q <= LOOKAHEAD_HOURS * 4; q++) {
         const t = new Date(snapped.getTime() + q * 15 * 60_000);
@@ -306,11 +351,12 @@ function getRecommendation(platform, audiencePreset, now, threshold, postType, g
       }
     }
     windowStartDate = new Date(snapped);
-    windowEndDate   = new Date(snapped.getTime() + Math.max(remainingMins, 15) * 60_000);
+    // End = start of first failing quarter; minimum = end of the current slot (15 min).
+    windowEndDate = new Date(snapped.getTime() + Math.max(remainingMins, 15) * 60_000);
 
   } else {
-    // Find the FIRST future quarter where score clears the threshold.
-    let firstQual = LOOKAHEAD_HOURS * 4;        // fallback: end of lookahead
+    // WAIT: find window start = first future quarter where score >= scoreThreshold.
+    let firstQual = -1;
     for (let q = 1; q <= LOOKAHEAD_HOURS * 4; q++) {
       const t = new Date(snapped.getTime() + q * 15 * 60_000);
       if (_scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche) >= scoreThreshold) {
@@ -318,20 +364,45 @@ function getRecommendation(platform, audiencePreset, now, threshold, postType, g
         break;
       }
     }
+
+    // Fallback (Case B): theoretically unreachable because the peak quarter always
+    // satisfies score >= bestScore*threshold, but guard against degenerate inputs.
+    if (firstQual === -1) {
+      let peakQ = 1, peakS = -Infinity;
+      for (let q = 1; q <= LOOKAHEAD_HOURS * 4; q++) {
+        const t = new Date(snapped.getTime() + q * 15 * 60_000);
+        const s = _scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche);
+        if (s > peakS) { peakS = s; peakQ = q; }
+      }
+      firstQual = peakQ;
+    }
+
     hoursToWait     = Math.max(1, Math.round(firstQual / 4));
     windowStartDate = new Date(snapped.getTime() + firstQual * 15 * 60_000);
-    windowEndDate   = new Date(windowStartDate.getTime() + getWindowDuration(flex) * 60_000);
+
+    // Window end = first quarter after t_start where score drops below scoreThreshold.
+    // Walk forward from t_start; track the last qualifying quarter index.
+    let lastQual = firstQual;
+    for (let q = firstQual + 1; q <= LOOKAHEAD_HOURS * 4; q++) {
+      const t = new Date(snapped.getTime() + q * 15 * 60_000);
+      if (_scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche) >= scoreThreshold) {
+        lastQual = q;
+      } else {
+        break;
+      }
+    }
+    // t_end = start of the first failing quarter = snapped + (lastQual + 1) * 15 min
+    windowEndDate = new Date(snapped.getTime() + (lastQual + 1) * 15 * 60_000);
   }
 
-  const s = _fmtRounded(windowStartDate);
-  const e = _fmtRounded(windowEndDate);
-  const bestWindowRange = s === e ? s : `${s} – ${e}`;
+  const bestWindowRange = _fmtWindowRange(windowStartDate, windowEndDate);
   const remainingLabel  = _fmtRemainingDuration(remainingMins);
 
   return {
     action:   postNow ? 'POST_NOW' : 'WAIT',
     hoursToWait,
     bestWindowRange,
+    windowEndDate,      // raw Date — used by the skip-window feature in app.js
     currentScore,
     bestScore,
     ratio,

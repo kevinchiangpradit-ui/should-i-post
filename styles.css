@@ -211,12 +211,24 @@ header {
   font-weight: 600;
 }
 
-/* 4. Best / peak window */
+/* 4. Best / peak window row — window text left, skip pill right */
+.window-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin-bottom: 20px;
+}
+
+/* suppress within-note's own bottom margin when inside the flex row */
+.window-row .within-note {
+  margin-bottom: 0;
+}
+
 .window-line {
   font-size: 0.875rem;
   color: var(--muted);
   line-height: 1.4;
-  margin-bottom: 20px;
 }
 
 .window-line strong {
@@ -677,4 +689,71 @@ html {
 
 .footer-brand a:hover {
   color: var(--muted);
+}
+
+/* ── Skip-window override ── */
+
+/* Pill — badge-style, right-aligned via margin-left: auto.
+   Works both when on the same line as window text and when wrapped. */
+.skip-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
+  background: var(--badge-bg);
+  border: none;
+  border-radius: 20px;
+  padding: 4px 11px;
+  font-size: 0.75rem;
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1.4;
+  transition: background 0.15s, color 0.15s;
+}
+
+.skip-btn:hover {
+  background: var(--surface-track);
+  color: var(--text);
+}
+
+/* Alternative window label — same scale as .window-line */
+.alt-window-line {
+  font-size: 0.875rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.alt-window-line strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* "Show best window again" — plain text link below the alt row */
+.reset-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: -12px;
+  margin-bottom: 18px;
+  font-size: 0.72rem;
+  font-family: inherit;
+  color: var(--subtle);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: var(--border);
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.reset-btn:hover {
+  color: var(--muted);
+  text-decoration-color: var(--muted);
 }
