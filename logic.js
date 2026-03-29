@@ -332,6 +332,7 @@ function getRecommendation(platform, audiencePreset, now, threshold, postType, g
 
   let hoursToWait     = 0;
   let remainingMins   = 0;
+  let firstQual       = 0;   // quarters until window start; 0 when already in a window
   let windowStartDate = new Date(snapped);
   let windowEndDate   = new Date(snapped.getTime() + 15 * 60_000);
 
@@ -356,7 +357,7 @@ function getRecommendation(platform, audiencePreset, now, threshold, postType, g
 
   } else {
     // WAIT: find window start = first future quarter where score >= scoreThreshold.
-    let firstQual = -1;
+    firstQual = -1;
     for (let q = 1; q <= LOOKAHEAD_HOURS * 4; q++) {
       const t = new Date(snapped.getTime() + q * 15 * 60_000);
       if (_scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche) >= scoreThreshold) {
@@ -399,7 +400,8 @@ function getRecommendation(platform, audiencePreset, now, threshold, postType, g
   const remainingLabel  = _fmtRemainingDuration(remainingMins);
 
   return {
-    action:   postNow ? 'POST_NOW' : 'WAIT',
+    action:          postNow ? 'POST_NOW' : 'WAIT',
+    minutesToWindow: postNow ? 0 : firstQual * 15,
     hoursToWait,
     bestWindowRange,
     windowEndDate,      // raw Date — used by the skip-window feature in app.js

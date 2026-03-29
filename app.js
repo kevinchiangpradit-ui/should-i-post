@@ -247,7 +247,14 @@
     const threshold = FLEXIBILITY_THRESHOLDS[currentFlex];
     const rec       = getRecommendation(platform, audience, now, threshold, postType, goal, currentFlex);
 
-    const state = rec.action === 'POST_NOW' ? 'NOW' : 'WAIT';
+    let state;
+    if (rec.action === 'POST_NOW') {
+      state = 'NOW';
+    } else if (rec.minutesToWindow <= 120) {
+      state = 'SOON';
+    } else {
+      state = 'WAIT';
+    }
     const level = activityLevel(rec.ratio, bands);
 
     const sub          = subDecision(state, rec.hoursToWait);
