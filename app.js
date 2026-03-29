@@ -256,10 +256,10 @@
       if (s > dayMax) dayMax = s;
     }
 
-    // Cap tallest bars at 60% of panel height so chart never overwhelms the text.
-    const MAX_BAR_PCT = 60;
+    // Remap: 50% of dayMax → 15% panel height, 100% of dayMax → 60% panel height.
+    // Linear: pct = (s / dayMax) * 90 - 30, clamped to minimum 2.
     const bars = scores.map(function (s, i) {
-      const pct = Math.max(Math.round((s / dayMax) * MAX_BAR_PCT), 3);
+      const pct = Math.max(Math.round((s / dayMax) * 90 - 30), 2);
       const cls = i === N - 1 ? ' chart-bar--now' : '';
       return '<div class="chart-bar' + cls + '" style="height:' + pct + '%"></div>';
     }).join('');
