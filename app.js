@@ -229,6 +229,28 @@
     }
   });
 
+  // ── Mini activity chart ──────────────────────────────────────────────────
+  // Builds a 12-bar sparkline-style strip covering the last ~3 hours.
+  // Bar heights are normalized against bestScore (the upcoming peak) so
+  // they convey both trend and absolute level simultaneously.
+  function buildActivityChart(platform, audience, postType, goal, now, bestScore) {
+    const N    = 12;
+    const STEP = 15 * 60_000;  // 15 minutes
+    const scores = [];
+    for (let i = N - 1; i >= 0; i--) {
+      const t = new Date(now.getTime() - i * STEP);
+      scores.push(getActivityScore(platform, audience, t, postType, goal, 'personal'));
+    }
+    // Normalize against the upcoming peak so bars show absolute activity level
+    const ref  = Math.max(bestScore, Math.max(...scores), 0.001);
+    const bars = scores.map(function (s, i) {
+      const pct = Math.max(Math.round((s / ref) * 100), 6);  // min 6% so bar always visible
+      const cls = i === N - 1 ? ' chart-bar--now' : '';
+      return '<div class="chart-bar' + cls + '" style="height:' + pct + '%"></div>';
+    }).join('');
+    return '<div class="activity-chart" aria-hidden="true">' + bars + '</div>';
+  }
+
   // ── Render ────────────────────────────────────────────────────────────────
 
   function render() {
@@ -296,11 +318,14 @@
         </div>`;
     }
 
+    const chart = buildActivityChart(platform, audience, postType, goal, now, rec.bestScore);
+
     resultEl.className = `result-card ${state.toLowerCase()}`;
     resultEl.innerHTML = `
       <div class="state">${t('state_' + state.toLowerCase())}</div>
       <div class="sub-decision">${sub}</div>
       <p class="reason">${reason}</p>
+      ${chart}
       ${windowSection}
       <div class="detail-row">
         <span>${t('right_now')}: <strong class="${levelClass}">${t('level_' + level.replace(' ', '_'))}</strong></span>

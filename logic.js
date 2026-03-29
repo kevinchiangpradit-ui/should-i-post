@@ -431,3 +431,16 @@ function getRecommendation(platform, audiencePreset, now, threshold, postType, g
     remainingLabel,
   };
 }
+
+/**
+ * Lightweight single-slot score query used by the mini activity chart.
+ * Skips the full lookahead computation — just scores one snapped quarter.
+ */
+function getActivityScore(platform, audiencePreset, time, postType, goal, niche) {
+  const modKey = (POST_TYPE_MOD_MAP[platform] || {})[postType] || null;
+  goal  = goal  || 'reach';
+  niche = niche || 'personal';
+  const snapped = new Date(time);
+  snapped.setMinutes(Math.floor(snapped.getMinutes() / 15) * 15, 0, 0);
+  return _scoreAtQuarter(platform, audiencePreset, snapped, modKey, goal, niche);
+}

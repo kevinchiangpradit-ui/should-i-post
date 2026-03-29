@@ -293,6 +293,33 @@ header {
   margin-top: 12px;
 }
 
+/* ── Mini activity chart ── */
+/* Sparkline-style bar strip: last 3 hours, soft and non-intrusive */
+.activity-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 30px;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.chart-bar {
+  flex: 1;
+  min-width: 0;
+  border-radius: 3px 3px 2px 2px;
+  opacity: 0.18;
+}
+
+.chart-bar--now {
+  opacity: 0.38;
+}
+
+/* Inherit accent color from card state */
+.now  .chart-bar { background: var(--green); }
+.soon .chart-bar { background: var(--orange); }
+.wait .chart-bar { background: var(--amber); }
+
 /* ── Controls ── */
 .controls {
   display: grid;
