@@ -24,7 +24,7 @@ window.TRANSLATIONS = {
     best_window:    'Best window',
     peak_window:    'Peak window',
     peak_hours:     '· peak hours',
-    right_now:      'Right now',
+    right_now:      'Activity right now',
 
     // ── Activity levels ──────────────────────────────────────────────────────────
     level_peak:     'peak',
