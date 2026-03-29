@@ -322,16 +322,18 @@
 
     resultEl.className = `result-card ${state.toLowerCase()}`;
     resultEl.innerHTML = `
-      <div class="state">${t('state_' + state.toLowerCase())}</div>
-      <div class="sub-decision">${sub}</div>
-      <p class="reason">${reason}</p>
       ${chart}
-      ${windowSection}
-      <div class="detail-row">
-        <span>${t('right_now')}: <strong class="${levelClass}">${t('level_' + level.replace(' ', '_'))}</strong></span>
-        <span class="score-badge">${badge}</span>
+      <div class="card-content">
+        <div class="state">${t('state_' + state.toLowerCase())}</div>
+        <div class="sub-decision">${sub}</div>
+        <p class="reason">${reason}</p>
+        ${windowSection}
+        <div class="detail-row">
+          <span>${t('right_now')}: <strong class="${levelClass}">${t('level_' + level.replace(' ', '_'))}</strong></span>
+          <span class="score-badge">${badge}</span>
+        </div>
+        <p class="disclaimer">${t('disclaimer', { platform: platformName })}</p>
       </div>
-      <p class="disclaimer">${t('disclaimer', { platform: platformName })}</p>
     `;
   }
 

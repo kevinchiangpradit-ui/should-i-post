@@ -160,6 +160,8 @@ header {
   transition: background 0.2s, border-color 0.2s;
   overflow-wrap: break-word;
   word-break: break-word;
+  position: relative;
+  overflow: hidden;   /* clips chart bars at card border-radius */
 }
 
 @media (min-width: 768px) {
@@ -293,26 +295,33 @@ header {
   margin-top: 12px;
 }
 
-/* ── Mini activity chart ── */
-/* Sparkline-style bar strip: last 3 hours, soft and non-intrusive */
+/* ── Mini activity chart — absolute background overlay ── */
+/* Fills the entire card behind all text; bars grow from the bottom */
 .activity-chart {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: flex-end;
   gap: 2px;
-  height: 30px;
-  margin-bottom: 16px;
-  width: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Content sits above the chart */
+.card-content {
+  position: relative;
+  z-index: 1;
 }
 
 .chart-bar {
   flex: 1;
   min-width: 0;
-  border-radius: 3px 3px 2px 2px;
-  opacity: 0.18;
+  border-radius: 3px 3px 0 0;
+  opacity: 0.09;
 }
 
 .chart-bar--now {
-  opacity: 0.38;
+  opacity: 0.19;
 }
 
 /* Inherit accent color from card state */
