@@ -156,7 +156,8 @@ const FLEXIBILITY_THRESHOLDS = {
   strict:   0.95,
 };
 
-const LOOKAHEAD_HOURS = 12;
+const LOOKAHEAD_HOURS      = 12;  // window for POST_NOW bestScore and inner bestFromQ
+const WAIT_LOOKAHEAD_HOURS = 24;  // outer search for next qualifying WAIT window
 
 // ─── Internal helpers ────────────────────────────────────────────────────────
 
@@ -356,37 +357,56 @@ function getRecommendation(platform, audiencePreset, now, threshold, postType, g
     windowEndDate = new Date(snapped.getTime() + Math.max(remainingMins, 15) * 60_000);
 
   } else {
-    // WAIT: find window start = first future quarter where score >= scoreThreshold.
+    // WAIT: find the first future slot where POST_NOW *will* fire when that time arrives.
+    // Criterion: score[q] / best_score_from_q(12h) >= threshold
+    // This is the same test POST_NOW applies at the current moment, so the displayed
+    // window is guaranteed to transition to POST_NOW when that time is reached.
     firstQual = -1;
-    for (let q = 1; q <= LOOKAHEAD_HOURS * 4; q++) {
-      const t = new Date(snapped.getTime() + q * 15 * 60_000);
-      if (_scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche) >= scoreThreshold) {
-        firstQual = q;
+    let scoreThresholdAtWindow = scoreThreshold;  // fallback; overwritten on match
+
+    // Outer loop: search up to 24 hours so we always find the next genuinely qualifying
+    // slot, even when the current 12-hour window contains no candidates.
+    for (let q = 1; q <= WAIT_LOOKAHEAD_HOURS * 4; q++) {
+      const t       = new Date(snapped.getTime() + q * 15 * 60_000);
+      const scoreAtQ = _scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche);
+
+      // Build bestScore for the 12-hour window starting at slot q — the same window
+      // POST_NOW will use when this time actually arrives.
+      let bestFromQ = scoreAtQ;
+      for (let r = 1; r <= LOOKAHEAD_HOURS * 4; r++) {
+        const u = new Date(t.getTime() + r * 15 * 60_000);
+        const s = _scoreAtQuarter(platform, audiencePreset, u, modKey, goal, niche);
+        if (s > bestFromQ) bestFromQ = s;
+      }
+
+      if (bestFromQ === 0 || scoreAtQ / bestFromQ >= threshold) {
+        firstQual              = q;
+        scoreThresholdAtWindow = bestFromQ * threshold;
         break;
       }
     }
 
-    // Fallback (Case B): theoretically unreachable because the peak quarter always
-    // satisfies score >= bestScore*threshold, but guard against degenerate inputs.
+    // Fallback: pick the absolute peak quarter within the 24-hour search window.
     if (firstQual === -1) {
       let peakQ = 1, peakS = -Infinity;
-      for (let q = 1; q <= LOOKAHEAD_HOURS * 4; q++) {
+      for (let q = 1; q <= WAIT_LOOKAHEAD_HOURS * 4; q++) {
         const t = new Date(snapped.getTime() + q * 15 * 60_000);
         const s = _scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche);
         if (s > peakS) { peakS = s; peakQ = q; }
       }
-      firstQual = peakQ;
+      firstQual              = peakQ;
+      scoreThresholdAtWindow = peakS * threshold;
     }
 
     hoursToWait     = Math.max(1, Math.round(firstQual / 4));
     windowStartDate = new Date(snapped.getTime() + firstQual * 15 * 60_000);
 
-    // Window end = first quarter after t_start where score drops below scoreThreshold.
-    // Walk forward from t_start; track the last qualifying quarter index.
+    // Window end: walk forward from firstQual (up to 12h) using the threshold that will
+    // be in force at that time, so window boundaries are consistent with POST_NOW.
     let lastQual = firstQual;
-    for (let q = firstQual + 1; q <= LOOKAHEAD_HOURS * 4; q++) {
+    for (let q = firstQual + 1; q <= firstQual + LOOKAHEAD_HOURS * 4; q++) {
       const t = new Date(snapped.getTime() + q * 15 * 60_000);
-      if (_scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche) >= scoreThreshold) {
+      if (_scoreAtQuarter(platform, audiencePreset, t, modKey, goal, niche) >= scoreThresholdAtWindow) {
         lastQual = q;
       } else {
         break;
