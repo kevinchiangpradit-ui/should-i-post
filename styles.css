@@ -32,8 +32,8 @@
 
   /* Decision accent colors — used for text and left accent only */
   --green:  #009245;
-  --orange: #c2410c;
-  --amber:  #92400e;
+  --orange: #92400e;
+  --amber:  #c2410c;
 
   /* Activity level label colors */
   --level-good: #009245;
@@ -65,8 +65,8 @@
 
   /* Decision accent colors — lighter for readability on dark */
   --green:  #4ade80;
-  --orange: #fb923c;
-  --amber:  #fbbf24;
+  --orange: #fbbf24;
+  --amber:  #fb923c;
 
   /* Activity level colors */
   --level-good: #4ade80;
@@ -290,8 +290,8 @@ header {
 
 /* Decision-colored badge: tinted bg + colored number per state */
 .now  .score-badge { background: rgba(0, 146, 69, 0.14); }
-.soon .score-badge { background: rgba(194, 65, 12, 0.14); }
-.wait .score-badge { background: rgba(146, 64, 14, 0.14); }
+.soon .score-badge { background: rgba(146, 64, 14, 0.14); }
+.wait .score-badge { background: rgba(194, 65, 12, 0.14); }
 
 .now  .score-badge strong { color: var(--green); }
 .soon .score-badge strong { color: var(--orange); }
