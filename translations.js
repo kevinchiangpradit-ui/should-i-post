@@ -405,7 +405,7 @@ window.TRANSLATIONS = {
     opt_asia:   '亚洲',
     opt_global: '全球混合',
 
-    opt_reach:      '覆盖',
+    opt_reach:      '触达',
     opt_engagement: '互动',
     opt_replies:    '回复',
     opt_clicks:     '点击',
@@ -427,7 +427,7 @@ window.TRANSLATIONS = {
 
     flex_flexible: '够好就行',
     flex_balanced: '平衡',
-    flex_strict:   '最佳时机',
+    flex_strict:   '精准',
 
     footer_free:     '免费工具',
     footer_no_login: '无需登录',
@@ -550,10 +550,10 @@ window.TRANSLATIONS = {
     label_timing:    'タイミング',
     hint: 'より正確な結果を得るには、フォロワーの多い地域に合わせてオーディエンスを選んでください。',
 
-    opt_us:     '米国',
+    opt_us:     'アメリカ',
     opt_eu:     'ヨーロッパ',
     opt_asia:   'アジア',
-    opt_global: 'グローバル混合',
+    opt_global: 'グローバル',
 
     opt_reach:      'リーチ',
     opt_engagement: 'エンゲージメント',
@@ -575,7 +575,7 @@ window.TRANSLATIONS = {
     post_question:   '質問',
     post_promotion:  'プロモーション',
 
-    flex_flexible: 'それなりで',
+    flex_flexible: 'ほどほどで',
     flex_balanced: 'バランス',
     flex_strict:   '最高を狙う',
 
