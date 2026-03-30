@@ -230,40 +230,47 @@
   });
 
   // ── Mini activity chart ──────────────────────────────────────────────────
-  // Builds a 12-bar sparkline-style strip covering the last ~3 hours.
-  // Bar heights are normalized against bestScore (the upcoming peak) so
-  // they convey both trend and absolute level simultaneously.
-  function buildActivityChart(platform, audience, postType, goal, now) {
-    const N    = 12;
-    const STEP = 15 * 60_000;  // 15 minutes
+  // Keeps .activity-chart as a persistent DOM node so CSS transitions can
+  // animate bar heights and background-color between renders.
 
-    // Collect the last ~3 hours of scores
+  // Create chart + card-content structure once; noop on subsequent calls.
+  function ensureChartStructure() {
+    if (resultEl.querySelector('.activity-chart')) return;
+    resultEl.innerHTML = '';  // clear HTML placeholder content
+    const chartEl = document.createElement('div');
+    chartEl.className = 'activity-chart';
+    chartEl.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 12; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'chart-bar' + (i === 11 ? ' chart-bar--now' : '');
+      chartEl.appendChild(bar);
+    }
+    resultEl.appendChild(chartEl);
+
+    const contentEl = document.createElement('div');
+    contentEl.className = 'card-content';
+    resultEl.appendChild(contentEl);
+  }
+
+  // Update bar heights. Normalized against bestScore — the same reference used
+  // by the recommendation engine — so bars are visually coherent with the
+  // verdict: POST_NOW (score ≥ ~90% of bestScore) shows tall bars, WAIT shows
+  // short bars. Works correctly for low-volume platforms like LinkedIn.
+  function updateChartBars(platform, audience, postType, goal, now, bestScore) {
+    const N    = 12;
+    const STEP = 15 * 60_000;
     const scores = [];
     for (let i = N - 1; i >= 0; i--) {
       const t = new Date(now.getTime() - i * STEP);
       scores.push(getActivityScore(platform, audience, t, postType, goal, 'personal'));
     }
-
-    // Normalize against the full 24h day peak — a stable reference so bar
-    // heights are proportionally consistent across all times of day.
-    // Low activity always looks low; peak activity always looks tall.
-    const midnight = new Date(now);
-    midnight.setHours(0, 0, 0, 0);
-    let dayMax = 0.001;
-    for (let q = 0; q < 96; q++) {
-      const t = new Date(midnight.getTime() + q * 15 * 60_000);
-      const s = getActivityScore(platform, audience, t, postType, goal, 'personal');
-      if (s > dayMax) dayMax = s;
-    }
-
-    // Remap: 50% of dayMax → 15% panel height, 100% of dayMax → 60% panel height.
-    // Linear: pct = (s / dayMax) * 90 - 30, clamped to minimum 2.
-    const bars = scores.map(function (s, i) {
-      const pct = Math.max(Math.round((s / dayMax) * 90 - 30), 2);
-      const cls = i === N - 1 ? ' chart-bar--now' : '';
-      return '<div class="chart-bar' + cls + '" style="height:' + pct + '%"></div>';
-    }).join('');
-    return '<div class="activity-chart" aria-hidden="true">' + bars + '</div>';
+    const normRef = Math.max(bestScore, 0.001);
+    const bars    = resultEl.querySelectorAll('.chart-bar');
+    scores.forEach(function (s, idx) {
+      // Remap: 100% of normRef → 60% panel height, 50% → 15%, linear.
+      const pct = Math.max(Math.round((s / normRef) * 90 - 30), 2);
+      bars[idx].style.height = pct + '%';
+    });
   }
 
   // ── Render ────────────────────────────────────────────────────────────────
@@ -333,12 +340,17 @@
         </div>`;
     }
 
-    const chart = buildActivityChart(platform, audience, postType, goal, now);
+    // Build DOM structure once; update it on subsequent renders.
+    ensureChartStructure();
 
+    // Updating the class triggers background-color transitions on chart bars.
     resultEl.className = `result-card ${state.toLowerCase()}`;
-    resultEl.innerHTML = `
-      ${chart}
-      <div class="card-content">
+
+    // Animate bar heights to new values.
+    updateChartBars(platform, audience, postType, goal, now, rec.bestScore);
+
+    // Replace card text content.
+    resultEl.querySelector('.card-content').innerHTML = `
         <div class="state">${t('state_' + state.toLowerCase())}</div>
         <div class="sub-decision">${sub}</div>
         <p class="reason">${reason}</p>
@@ -348,8 +360,7 @@
           <span class="score-badge">${badge}</span>
         </div>
         <p class="disclaimer">${t('disclaimer', { platform: platformName })}</p>
-      </div>
-    `;
+      `;
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────

@@ -126,14 +126,13 @@ header {
   margin: 0;
 }
 
-/* Theme toggle — pill button, icon via ::before */
+/* Theme toggle — pill button with inline SVG icons */
 .theme-toggle {
   background: none;
   border: 1.5px solid var(--border);
   border-radius: 20px;
   padding: 7px 13px;
   cursor: pointer;
-  font-size: 1rem;
   color: var(--muted);
   line-height: 1;
   transition: border-color 0.15s, color 0.15s;
@@ -141,14 +140,25 @@ header {
   user-select: none;
   min-height: 36px;
   min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .theme-toggle:hover { border-color: var(--muted); color: var(--text); }
 .theme-toggle:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 
-/* Show moon in light mode (click = go dark), sun in dark mode (click = go light) */
-[data-theme="light"] .theme-toggle::before { content: '☽'; }
-[data-theme="dark"]  .theme-toggle::before { content: '☀'; }
+/* SVG icons inside toggle */
+.theme-toggle svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Show moon in light mode, sun in dark mode */
+[data-theme="light"] .icon-sun  { display: none; }
+[data-theme="dark"]  .icon-moon { display: none; }
 
 /* ── Result card ── */
 .result-card {
@@ -318,6 +328,7 @@ header {
   min-width: 0;
   border-radius: 3px 3px 0 0;
   opacity: 0.07;
+  transition: height 0.35s ease-in-out, background-color 0.35s ease-in-out;
 }
 
 .chart-bar--now {
@@ -328,6 +339,10 @@ header {
 .now  .chart-bar { background: var(--green); }
 .soon .chart-bar { background: var(--orange); }
 .wait .chart-bar { background: var(--amber); }
+
+@media (prefers-reduced-motion: reduce) {
+  .chart-bar { transition: none; }
+}
 
 /* ── Controls ── */
 .controls {
