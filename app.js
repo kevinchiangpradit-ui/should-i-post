@@ -113,20 +113,26 @@
     return h === 1 ? t('sub_wait_hour') : t('sub_wait_hours', { n: h });
   }
 
-  // Deterministic variant index — changes every 15 min, never flickers mid-render.
-  function _reasonVariant(now) {
-    return Math.floor(now.getTime() / (15 * 60 * 1000)) % 4;
+  // Deterministic variant index — changes every 15 min.
+  // flex pins the index: flexible→0 (permissive), strict→3 (emphasise waiting),
+  // balanced rotates between 1 and 2.
+  function _reasonVariant(now, flex) {
+    if (flex === 'flexible') return 0;
+    if (flex === 'strict')   return 3;
+    return (Math.floor(now.getTime() / (15 * 60 * 1000)) % 2) + 1;
   }
 
-  function reasonLine(state, level, bestScore, now) {
+  function reasonLine(state, level, bestScore, now, justMissed, flex) {
     if (state === 'NOW') {
       if (bestScore < 1) return t('reason_slow_all_day');
-      return t('reason_now_' + _reasonVariant(now));
+      return t('reason_now_' + _reasonVariant(now, flex));
     }
+    if (justMissed) return t('reason_just_missed_' + _reasonVariant(now, flex));
+    if (state === 'SOON') return t('reason_peak_soon_' + _reasonVariant(now, flex));
     if (level === 'very low' || level === 'low') {
-      return t('reason_wait_' + _reasonVariant(now));
+      return t('reason_wait_' + _reasonVariant(now, flex));
     }
-    return t('reason_mid_' + _reasonVariant(now));
+    return t('reason_mid_' + _reasonVariant(now, flex));
   }
 
   function activityBadge(state, ratio, currentScore, bestScore) {
@@ -302,7 +308,14 @@
     const level = activityLevel(rec.ratio, bands);
 
     const sub          = subDecision(state, rec.hoursToWait);
-    const reason       = reasonLine(state, level, rec.bestScore, now);
+
+    // "Just missed peak" — was the score POST_NOW quality 30 min ago?
+    const justMissed = state !== 'NOW' && (function () {
+      const pastScore = getActivityScore(platform, audience, new Date(now.getTime() - 30 * 60_000), postType, goal, 'personal');
+      return rec.bestScore > 0 && pastScore / rec.bestScore >= bands.now;
+    }());
+
+    const reason       = reasonLine(state, level, rec.bestScore, now, justMissed, currentFlex);
     const badge        = activityBadge(state, rec.ratio, rec.currentScore, rec.bestScore);
     const levelClass   = 'level-' + level.replace(' ', '-');
     const windowLabel  = state === 'NOW' ? t('peak_window') : t('best_window');
