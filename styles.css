@@ -523,6 +523,14 @@ html {
   .hero-sub      { font-size: 0.82rem; }
 }
 
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
 .nav-brand {
   display: flex;
   align-items: center;
@@ -534,6 +542,28 @@ html {
 }
 
 .nav-brand:hover { opacity: 0.7; }
+
+.nav-sep {
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 900;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1;
+  user-select: none;
+}
+
+.nav-sitename {
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 900;
+  font-size: 0.88rem;
+  letter-spacing: -0.03em;
+  color: var(--text);
+  text-decoration: none;
+  line-height: 1;
+  transition: opacity 0.15s;
+}
+
+.nav-sitename:hover { opacity: 0.7; }
 
 .nav-links {
   display: flex;
