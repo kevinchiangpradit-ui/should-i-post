@@ -1,0 +1,10 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.shouldipostnow.com" }],
+      "destination": "https://shouldipostnow.com/:path*",
+      "permanent": true
+    }
+  ]
+}
