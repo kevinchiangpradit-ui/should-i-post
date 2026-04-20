@@ -1,13 +1,12 @@
 # How It Works — Should I Post Now?
 
-**URL:** https://shouldipostnow.com/how-it-works.html  
-**See also:** https://shouldipostnow.com/
+**shouldipostnow.com/how-it-works.html**
 
 ---
 
-## Overview
+## Definition
 
-The tool assigns a numeric activity score to each 15-minute interval across the day. Scores are platform-specific and adjusted by audience region, post type, and goal. The current score is compared against the best available score in the next 12 hours to produce a normalised ratio, which determines the verdict.
+The tool assigns a numeric activity score (range 0–~15) to each 15-minute interval of the day. The current score is compared to the maximum score available in the next 12 hours. The ratio determines the verdict.
 
 ---
 
@@ -15,112 +14,128 @@ The tool assigns a numeric activity score to each 15-minute interval across the 
 
 ### Activity curves
 
-Each platform (Instagram, TikTok, Twitter/X, LinkedIn, Reddit) has a distinct activity curve representing typical audience engagement patterns throughout the day. Curves are weighted by:
+Each of the 5 supported platforms has a distinct activity curve representing typical audience behaviour across a 24-hour day. Curves are adjusted by 4 factors:
 
-- **Audience region:** US, Europe, Asia, Mixed Global
-- **Post type:** e.g. Reel vs. Static on Instagram; Video vs. Text on LinkedIn
-- **Goal:** Reach, Engagement, Replies, Clicks
+1. **Audience region:** US, Europe, Asia, Mixed Global
+2. **Post type:** e.g. Reel vs. Static on Instagram; Video vs. Text post on LinkedIn
+3. **Goal:** Reach, Engagement, Replies, Clicks
+4. **Time of day:** scores peak at typical high-activity windows (e.g. weekday mornings for LinkedIn, evenings for Instagram Reels/US)
 
-### Score normalisation
+### Normalisation
 
 ```
-bestScore = max(score) over next 12 hours from now
+bestScore = max(score) over next 12 hours from current time
 ratio     = currentScore / bestScore
 ```
 
-`bestScore` is recomputed each render and each 60-second auto-refresh.
+`bestScore` is recomputed every 60 seconds.
 
 ---
 
 ## Decision logic
 
 ```
-POST_NOW  if  ratio >= threshold
-SOON      if  ratio < threshold  AND  minutesToNextWindow <= 120
-WAIT      otherwise
+POST_NOW  →  ratio >= threshold
+SOON      →  ratio < threshold  AND  minutesToNextWindow <= 120
+WAIT      →  all other cases
 ```
 
-**Thresholds by timing setting:**
+### Thresholds
 
-| Setting | Threshold |
-|---------|-----------|
-| Good enough (flexible) | 0.80 |
-| Balanced | 0.90 |
-| Best possible (strict) | 0.95 |
+| Timing setting | Threshold | Meaning |
+|----------------|-----------|---------|
+| Good enough | 0.80 | Score is ≥ 80% of today's best |
+| Balanced | 0.90 | Score is ≥ 90% of today's best |
+| Best possible | 0.95 | Score is ≥ 95% of today's best |
 
 ---
 
 ## Next window search
 
-When the verdict is WAIT, the tool scans the next 24 hours at 15-minute intervals to find the earliest slot where:
+When verdict is WAIT, the tool scans the next 24 hours at 15-minute resolution to find the first slot satisfying:
 
 ```
 scoreAtSlot / bestScoreFromSlot(12h lookahead) >= threshold
 ```
 
-This forward-validation step ensures that the suggested window will itself trigger POST_NOW when it arrives. Windows that would not qualify on arrival are skipped.
+**Forward-validation:** each candidate is tested against its own 12-hour best score at the time it would occur. This prevents suggesting a window that looks good now but falls short of threshold when it actually arrives.
 
 ---
 
 ## Just-missed detection
 
-If the activity score 30 minutes ago met the POST_NOW threshold but the current score does not, a "just missed peak" reason variant is shown. This informs the user they were recently in a strong window.
+```
+pastScore = score at (now − 30 minutes)
+justMissed = (pastScore / bestScore) >= threshold
+```
+
+If true and the current state is not POST_NOW, a "just missed peak" reason variant is shown.
 
 ---
 
 ## Reason line system
 
-The reason message is selected by a combination of state, just-missed flag, and timing strictness:
+One reason string is selected per render based on 3 factors:
 
-| Context | Trigger condition |
-|---------|------------------|
-| `reason_now` | state = NOW |
-| `reason_peak_soon` | state = SOON |
-| `reason_just_missed` | state ≠ NOW AND score 30 min ago was POST_NOW quality |
-| `reason_wait` | state = WAIT, current level low or very low |
-| `reason_mid` | state = WAIT, current level medium or high |
+| Factor | Values |
+|--------|--------|
+| State | NOW / SOON / WAIT |
+| Just-missed flag | true / false |
+| Timing strictness | flexible / balanced / strict |
 
-Timing strictness pins a variant index: flexible → 0, strict → 3, balanced rotates 1–2 by 15-min clock tick.
+Priority order for selection:
+1. NOW → `reason_now_*`
+2. SOON → `reason_peak_soon_*`
+3. Just-missed (state ≠ NOW) → `reason_just_missed_*`
+4. WAIT, level low/very-low → `reason_wait_*`
+5. WAIT, level medium/high → `reason_mid_*`
+
+Strictness pins variant index: flexible → 0, strict → 3, balanced → rotates 1–2 on 15-min clock.
 
 ---
 
 ## Activity chart
 
-12 bars, one per 15-minute slot covering the last 3 hours. Bar height formula:
+12 bars, one per 15-minute slot, covering the 3 hours before the current time.
 
+Bar height formula:
 ```
-pct = max(round((score / bestScore) * 90 - 30), 2)
+pct = max(round((score / bestScore) * 90 − 30), 2)
 ```
 
-This maps ~50% of best → ~15% bar height, 100% of best → ~60% bar height. Bars animate with `cubic-bezier(0.4, 0, 0.2, 1)` easing when inputs change. Respects `prefers-reduced-motion`.
+Mapping: 50% of best → ~15% bar height · 100% of best → ~60% bar height · floor: 2%
+
+Bar heights and colours animate at 0.5 seconds using `cubic-bezier(0.4, 0, 0.2, 1)` easing when inputs change. Respects `prefers-reduced-motion: reduce`.
 
 ---
 
 ## Auto-refresh
 
-Rerenders every 60 seconds. All state is derived from the current wall-clock time — no persistence required.
+Rerenders every 60 seconds. State is derived entirely from wall-clock time. No persistence required.
 
 ---
 
-## Execution sequence
+## Execution sequence (per render)
 
-1. User sets inputs via dropdowns
-2. Time is snapped to nearest 15-minute boundary
-3. Current slot is scored; `bestScore` is computed over next 12 hours
-4. POST_NOW threshold is evaluated → verdict assigned
-5. If WAIT: next 24 hours scanned for first validated qualifying window
-6. `minutesToWindow` derived → SOON check applied
-7. Just-missed flag computed (30-minute lookback)
-8. Reason line selected
-9. Activity chart updated (DOM mutation with CSS transition)
-10. Result card rendered with verdict, reason, and window details
+1. Read inputs: platform, audience, postType, goal, flex
+2. Snap current time to nearest 15-minute boundary
+3. Compute `currentScore`
+4. Scan next 12 hours → compute `bestScore`
+5. Compute `ratio = currentScore / bestScore`
+6. Apply threshold → POST_NOW or WAIT decision
+7. If WAIT: scan next 24 hours for first forward-validated qualifying window
+8. Compute `minutesToWindow` → apply SOON check
+9. Compute just-missed flag (30-minute lookback)
+10. Select reason line
+11. Mutate 12 chart bar DOM elements (triggers CSS transitions)
+12. Update result card: state, reason, window, score data
 
 ---
 
-## Limitations
+## What the model does not account for
 
-- Activity patterns are generalised per platform and region — not derived from the user's actual follower data
-- No integration with any social platform API
-- Static patterns; does not reflect real-time events, viral moments, or algorithmic changes
-- Accuracy decreases for niche audiences or atypical posting schedules
-- All computation runs in the browser; no server-side logic or data
+- User's personal follower or engagement data
+- Real-time platform events or trending content
+- Platform algorithm updates or changes
+- Content quality, caption text, or hashtags
+- Exact day-of-week patterns beyond region-level averages (e.g. LinkedIn weekday vs. weekend is modelled; specific calendar events are not)

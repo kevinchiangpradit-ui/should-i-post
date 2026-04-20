@@ -1,94 +1,118 @@
 # FAQ — Should I Post Now?
 
-**URL:** https://shouldipostnow.com/faq.html  
-**See also:** https://shouldipostnow.com/how-it-works.html
+**shouldipostnow.com/faq.html**
 
 ---
 
-## Is this based on my actual followers?
+## Pricing and access
 
-No. The tool uses generalised platform activity patterns for the selected audience region. It has no access to your follower list, engagement history, or platform account. It cannot connect to any social media account.
+**Is this tool free?**  
+Yes. No cost, no subscription, no account required. All features are available to all users at no charge.
 
----
+**Do I need to create an account?**  
+No. The tool works without signup, login, or email address.
 
-## Do I need to log in or connect an account?
-
-No. The tool requires no login, no account connection, and no signup. Everything runs in the browser.
-
----
-
-## Which platforms are supported?
-
-Instagram, TikTok, Twitter/X, LinkedIn, Reddit.
+**Is there a paid version with more features?**  
+No. There is one version of the tool. No premium tier exists.
 
 ---
 
-## What audience regions are available?
+## What it does
 
-US, Europe, Asia, Mixed Global. Select the region where the majority of your followers are located for the most relevant result.
+**What does the tool do?**  
+It tells you whether the current moment is a good time to post on a specific social media platform. It scores the current 15-minute window against typical activity patterns for the selected platform and audience region, and returns one of three verdicts: POST NOW, SOON, or WAIT.
 
----
+**What does POST NOW mean?**  
+The current time window meets or exceeds the activity threshold. Specifically, the current score is at least 80%, 90%, or 95% of the best available score in the next 12 hours (depending on timing setting).
 
-## What post types are available?
+**What does SOON mean?**  
+The current window does not meet the threshold, but a qualifying window is available within the next 120 minutes.
 
-Post types vary by platform:
+**What does WAIT mean?**  
+Activity is currently low relative to the day's best window. The tool shows the next qualifying window and an estimated wait time in hours.
 
-- **Instagram:** Reel, Story, Carousel, Static image, Video
-- **TikTok:** Video, Photo carousel, Live
-- **Twitter/X:** Text post, Image, Video, Link, Poll
-- **LinkedIn:** Text post, Article, Video, Image, Document
-- **Reddit:** Link post, Text post, Image/video
-
----
-
-## What does "timing strictness" mean?
-
-Strictness controls how high the current activity score must be relative to the best available score in the next 12 hours before the tool recommends posting:
-
-- **Good enough:** Posts when score ≥ 80% of the day's best
-- **Balanced:** Posts when score ≥ 90% of the day's best
-- **Best possible:** Posts when score ≥ 95% of the day's best
-
-Higher strictness means fewer POST NOW results and longer recommended waits.
+**How accurate is it?**  
+Results are based on generalised platform activity patterns for the selected region, not personal follower data. They are a useful baseline timing signal — not a guarantee of engagement or reach. Accuracy improves when audience region is set to match where the majority of followers are.
 
 ---
 
-## What does SOON mean?
+## Platforms and inputs
 
-SOON means the current window does not meet the threshold, but a qualifying window is available within the next 2 hours. It is a middle state between POST NOW and WAIT.
+**Which platforms are supported?**  
+Instagram, TikTok, Twitter/X, LinkedIn, Reddit. 5 platforms total.
 
----
+**Which post types are available?**  
+Post types vary by platform. Examples: Instagram supports Reel, Story, Carousel, Static image, Video. LinkedIn supports Text post, Article, Video, Image, Document. Twitter/X supports Text, Image, Video, Link, Poll.
 
-## What is the "I'll be asleep then" button?
+**What does "timing strictness" control?**  
+It sets the minimum ratio (current score ÷ 12-hour best score) required for POST NOW:
+- Good enough: 0.80 (posts more often)
+- Balanced: 0.90
+- Best possible: 0.95 (posts only near peak)
 
-This button appears when a WAIT verdict is shown. Pressing it skips the current recommended window and finds the next qualifying window after it — useful when the primary suggestion falls at an inconvenient time.
+**What does "audience region" mean?**  
+It adjusts the activity curve to reflect when users in that region are typically active. Select the region where most of your followers are located, not where you are.
 
----
-
-## Does the tool guarantee better reach or engagement?
-
-No. The tool provides a timing signal based on typical platform activity patterns. It cannot account for content quality, the platform algorithm's current behaviour, trending topics, or your specific audience's habits. Results are a useful baseline, not a guarantee.
-
----
-
-## How often does the result update?
-
-The result auto-refreshes every 60 seconds. No action is required.
+**What if my audience is split across regions?**  
+Select Mixed Global. This uses a blended activity curve.
 
 ---
 
-## Is any data stored or transmitted?
+## Accounts and data
 
-No. All computation runs in the browser. No user inputs, timing data, or results are sent to any server or stored anywhere.
+**Does this connect to my Instagram, TikTok, or other account?**  
+No. The tool has no access to any social media account. It cannot read your followers, posts, or engagement data.
+
+**Does it use my personal analytics?**  
+No. It uses generalised platform activity patterns. Personal analytics (e.g. Instagram Insights, LinkedIn Analytics) are not accessed.
+
+**Does it work if I have a personal (non-Business) account?**  
+Yes. It requires no Business or Creator account status, and no platform analytics access.
+
+**Is any data stored?**  
+No. Language and theme preference are stored in the user's own browser (localStorage). No data is sent to any server.
 
 ---
 
-## Is the tool free?
+## Behaviour
 
-Yes. There is no cost, no subscription, and no account required.
+**How often does the result update?**  
+Every 60 seconds automatically, with no action required.
+
+**What is the "I'll be asleep then" button?**  
+It appears when a WAIT verdict is shown. It skips the primary recommended window and finds the next qualifying window after it — for cases where the suggested time is inconvenient.
+
+**Does it account for day of week?**  
+Yes, at a platform/region level. For example, LinkedIn activity curves reflect lower weekend activity. Specific calendar events or holidays are not accounted for.
+
+**Does it schedule or publish posts?**  
+No. The tool only provides a timing recommendation. It does not connect to any account or post on your behalf.
 
 ---
 
-## What languages are supported?
+## Comparison
 
-English, Spanish, Chinese (Simplified), Japanese, French, German. The language selector is in the top-right corner of the page.
+**How is this different from Buffer or Hootsuite?**  
+Buffer and Hootsuite schedule and publish posts, connect to your accounts, and show personalised analytics. Should I Post Now? does none of these — it only answers "is now a good time?" It requires no account connection and works for personal accounts.
+
+**How is this different from Instagram's own "Best time to post" feature?**  
+Instagram's feature uses your personal follower data and requires a Business or Creator account. Should I Post Now? uses generalised regional patterns and works with any account type, including personal accounts where Insights are unavailable.
+
+**Does it replace platform analytics?**  
+No. If you have access to platform analytics with your personal audience data, those will be more accurate for your specific account. This tool is most useful when personal analytics are unavailable or when you want a quick check without opening another app.
+
+---
+
+## Technical
+
+**Does it work on mobile?**  
+Yes. It runs in any modern browser on any device.
+
+**Does it require JavaScript?**  
+Yes. All scoring and rendering is done in JavaScript in the browser.
+
+**Is there an API?**  
+No. The tool is UI-only with no programmatic API.
+
+**What languages is it available in?**  
+English, Spanish, Chinese (Simplified), Japanese, French, German. 6 languages total. Language can be changed using the selector in the top-right corner.

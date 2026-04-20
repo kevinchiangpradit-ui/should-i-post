@@ -1,15 +1,14 @@
 # Should I Post Now?
 
-**URL:** https://shouldipostnow.com  
-**Type:** Free, browser-only timing tool. No login, no account connection, no data stored.  
-**Platforms:** Instagram, TikTok, Twitter/X, LinkedIn, Reddit  
-**Languages:** English, Spanish, Chinese (Simplified), Japanese, French, German
+**shouldipostnow.com** — Free browser tool. Tells you whether to post on social media now or wait, based on platform activity patterns for your audience region.
+
+Cost: Free. No login. No account connection. No data stored.
 
 ---
 
-## What it does
+## Definition
 
-Determines whether the current moment is a good time to post on a social media platform. Scores the current 15-minute window against platform-specific activity patterns and returns a verdict with an explanation and, when relevant, the next best posting window.
+Should I Post Now? scores the current 15-minute time window against a platform-specific activity curve, normalised against the best available score in the next 12 hours. It returns one of three verdicts with a reason and, when applicable, the next best posting time.
 
 ---
 
@@ -17,21 +16,23 @@ Determines whether the current moment is a good time to post on a social media p
 
 | Verdict | Meaning |
 |---------|---------|
-| POST NOW | Current window meets the activity threshold. Post now. |
-| SOON | Current window falls short, but a qualifying window is within 2 hours. |
-| WAIT | Activity is low. Shows next best window and estimated wait time. |
+| POST NOW | Current score ÷ 12h best score ≥ threshold. Post now. |
+| SOON | Below threshold, but a qualifying window is within 120 minutes. |
+| WAIT | Activity is low. Shows next qualifying window and hours to wait. |
 
 ---
 
 ## Inputs
 
-| Field | Options |
-|-------|---------|
-| Platform | Instagram, TikTok, Twitter/X, LinkedIn, Reddit |
-| Audience | US, Europe, Asia, Mixed Global |
-| Post type | Varies by platform — e.g. Reel, Story, Carousel, Static (Instagram) |
-| Goal | Reach, Engagement, Replies, Clicks |
-| Timing | Good enough (flexible) · Balanced · Best possible (strict) |
+| Field | Values |
+|-------|--------|
+| Platform | Instagram · TikTok · Twitter/X · LinkedIn · Reddit |
+| Audience | US · Europe · Asia · Mixed Global |
+| Post type | Per-platform (e.g. Reel, Story, Carousel, Static for Instagram) |
+| Goal | Reach · Engagement · Replies · Clicks |
+| Timing | Good enough (0.80) · Balanced (0.90) · Best possible (0.95) |
+
+The "Timing" field sets the minimum ratio threshold required to trigger POST NOW.
 
 ---
 
@@ -40,48 +41,48 @@ Determines whether the current moment is a good time to post on a social media p
 | Field | Description |
 |-------|-------------|
 | `state` | NOW / SOON / WAIT |
-| `reason` | Context-aware explanation of the verdict |
-| `bestWindowRange` | Time range of next recommended window (WAIT/SOON) |
-| `hoursToWait` | Estimated wait in hours (WAIT) |
-| `remainingLabel` | Time remaining in current window (NOW) |
-| `currentScore` | Numeric score for the current 15-min slot (0–~15) |
-| `bestScore` | Maximum score available in next 12 hours |
-| `ratio` | currentScore / bestScore |
-| Activity chart | 12-bar sparkline of the last 3 hours |
+| `reason` | 1-sentence explanation of the verdict |
+| `bestWindowRange` | Time range of next qualifying window (e.g. "6:00 AM – 7:30 AM") |
+| `hoursToWait` | Estimated hours until next window (WAIT state) |
+| `remainingLabel` | Time left in current window, e.g. "45 minutes" (NOW state) |
+| `currentScore` | Numeric score for current 15-min slot (0–~15) |
+| `bestScore` | Max score available in next 12 hours |
+| `ratio` | currentScore ÷ bestScore (0–1) |
+| Chart | 12 bars × 15-minute intervals covering the last 3 hours |
 
 ---
 
-## Scoring logic
+## Scoring thresholds
 
-- Time is snapped to the nearest 15-minute boundary
-- `currentScore / bestScore >= threshold` → POST NOW
-  - flexible: 0.80 · balanced: 0.90 · strict: 0.95
-- SOON fires when state is WAIT and next window ≤ 120 minutes away
-- Next window is validated: candidate slot must itself trigger POST_NOW on arrival
+- Good enough: ratio ≥ 0.80 → POST NOW
+- Balanced: ratio ≥ 0.90 → POST NOW
+- Best possible: ratio ≥ 0.95 → POST NOW
+- SOON fires when state is WAIT and next window is ≤ 120 minutes away
+- Next window is forward-validated: each candidate must itself pass the threshold on arrival
 - Auto-refreshes every 60 seconds
 
 ---
 
 ## Use cases
 
-- Deciding whether to post a Reel now or wait for a stronger window
-- Checking peak hours for a platform and region without platform analytics access
-- Adjusting post timing when audience timezone differs from creator timezone
-- Quick pre-post timing check for personal (non-Business) accounts
+- Personal Instagram/TikTok account: deciding whether to post a Reel now or wait, without access to Insights
+- Timezone mismatch: creator is in Europe, audience is in the US — select "US" as audience region
+- Platform comparison: checking whether LinkedIn is active before a Tuesday morning post
+- Quick sanity check: 30-second timing check before posting without opening any third-party tool
 
 ---
 
 ## What it does not do
 
-- Connect to any social media account or read personal data
+- Connect to social media accounts or read follower/engagement data
 - Schedule or publish posts
-- Account for content quality, hashtags, captions, or trends
-- Use real-time platform data or trending topic information
+- Account for content quality, hashtags, captions, or trending topics
+- Use real-time platform data
 - Store any user data
-- Provide personalised predictions based on individual follower behaviour
+- Provide personalised predictions based on individual account behaviour
 
 ---
 
 ## Accuracy note
 
-Recommendations use generalised platform activity patterns per region — not the user's personal follower data. Useful as a free baseline signal, particularly for personal accounts without analytics access. Accuracy improves when audience region is set correctly.
+Activity patterns are generalised per platform and audience region — not derived from the user's personal follower data. Accuracy is higher when audience region is set to match where the majority of followers are located. Does not reflect real-time events or algorithmic changes.
