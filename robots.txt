@@ -1,4 +1,33 @@
 User-agent: *
 Allow: /
+Crawl-delay: 10
+
+# Block aggressive SEO/analytics crawlers that don't add indexing value
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: DataForSeoBot
+Disallow: /
+
+User-agent: serpstatbot
+Disallow: /
+
+User-agent: seoscanners.net
+Disallow: /
 
 Sitemap: https://shouldipostnow.com/sitemap.xml
