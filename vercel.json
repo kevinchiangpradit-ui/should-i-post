@@ -5,40 +5,38 @@
       "has": [{ "type": "host", "value": "www.shouldipostnow.com" }],
       "destination": "https://shouldipostnow.com/:path*",
       "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "should-i-post.vercel.app" }],
+      "destination": "https://shouldipostnow.com/:path*",
+      "permanent": true
     }
   ],
   "headers": [
     {
-      "source": "/styles.css",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "source": "/(styles|logic|app|translations|i18n)\\.(css|js)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }]
     },
     {
-      "source": "/logic.js",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "source": "/(favicon-48|favicon-96|favicon|logo-512|logo-192|og-image|shouldipostlogo)\\.png",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=2592000" }]
     },
     {
-      "source": "/app.js",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "source": "/favicon\\.(ico|svg)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=2592000" }]
     },
     {
-      "source": "/translations.js",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "source": "/logo\\.svg",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000, stale-while-revalidate=2592000" }]
     },
     {
-      "source": "/i18n.js",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "source": "/robots\\.txt",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
     },
     {
-      "source": "/(favicon-48|favicon-96|favicon|logo-512|logo-192|og-image).png",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
-    },
-    {
-      "source": "/favicon.(ico|svg)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
-    },
-    {
-      "source": "/logo.svg",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "source": "/sitemap\\.xml",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=86400" }]
     },
     {
       "source": "/(.*)\\.html",
