@@ -2,6 +2,12 @@
   "redirects": [
     {
       "source": "/:path*",
+      "has": [{ "type": "host", "value": "shouldipostnow.com" }],
+      "destination": "https://www.shouldipostnow.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
       "has": [{ "type": "host", "value": "should-i-post.vercel.app" }],
       "destination": "https://www.shouldipostnow.com/:path*",
       "permanent": true
